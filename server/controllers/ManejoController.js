@@ -1,5 +1,5 @@
 const {
-    getManejoDB,
+    getManejosDB,
     addManejoDB,
     updateManejoDB,
     deleteManejoDB,

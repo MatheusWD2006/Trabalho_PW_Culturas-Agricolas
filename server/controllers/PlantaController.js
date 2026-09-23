@@ -1,5 +1,5 @@
 const {
-    getPlantaDB,
+    getPlantasDB,
     addPlantaDB,
     updatePlantaDB,
     deletePlantaDB,
@@ -7,7 +7,7 @@ const {
 } = require('../usecases/plantaUseCases');
 
 const getPlantas = async (request, response) => {
-    await getPlantaDB()
+    await getPlantasDB()
         .then(data => response.status(200).json(data))
         .catch(err => response.status(400).json({
             status: 'error',

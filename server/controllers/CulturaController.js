@@ -1,5 +1,5 @@
 const {
-    getCulturaDB,
+    getCulturasDB,
     addCulturaDB,
     updateCulturaDB,
     deleteCulturaDB,

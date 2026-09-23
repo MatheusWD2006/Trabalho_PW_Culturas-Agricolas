@@ -97,7 +97,7 @@ const deletePlantaDB = async (codigo) => {
     }
 };
 
-const getPlantaPorIdDB = async (codigo) => {
+const getPlantaPorCodigoDB = async (codigo) => {
     try {
         const results = await pool.query(
             `SELECT * FROM plantas
@@ -129,5 +129,5 @@ module.exports = {
     addPlantaDB,
     updatePlantaDB,
     deletePlantaDB,
-    getPlantaPorIdDB
+    getPlantaPorCodigoDB
 };

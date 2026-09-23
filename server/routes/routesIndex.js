@@ -1,9 +1,9 @@
-const rotasCultura = require('./RotasCultura');
-const rotasPlanta = require('./RotasPlanta');
-const rotasManejo = require('./RotasManejo');
+const routesCulturas = require('./RotasCultura');
+const routesPlantas = require('./RotasPlanta');
+const routesManejos = require('./RotasManejo');
 
 module.exports = [
-  rotasCultura,
-  rotasPlanta,
-  rotasManejo,
+  routesCulturas,
+  routesPlantas,
+  routesManejos,
 ];

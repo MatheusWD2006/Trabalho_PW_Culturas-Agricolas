@@ -97,7 +97,7 @@ const deleteCulturaDB = async (codigo) => {
     }
 };
 
-const getCulturaPorIdDB = async (codigo) => {
+const getCulturaPorCodigoDB = async (codigo) => {
     try {
         const results = await pool.query(
             `SELECT * FROM culturas
@@ -128,5 +128,5 @@ module.exports = {
     addCulturaDB,
     updateCulturaDB,
     deleteCulturaDB,
-    getCulturaPorIdDB
+    getCulturaPorCodigoDB
 };
