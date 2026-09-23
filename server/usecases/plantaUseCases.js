@@ -4,13 +4,16 @@ const Planta = require('../entities/Plantas');
 const getPlantasDB = async () => {
     try {
         const { rows } = await pool.query(
-            'SELECT * FROM plantas ORDER BY nome'
+            'SELECT * FROM plantas ORDER BY nome_planta'
         );
 
         return rows.map(
             (planta) => new Planta(
                 planta.id_planta,
-                planta.nome
+                planta.nome_planta,
+                planta.nome_cientifico,
+                planta.tipo_planta,
+                planta.descricao_planta
             )
         );
     } catch (err) {
@@ -20,20 +23,23 @@ const getPlantasDB = async () => {
 
 const addPlantaDB = async (body) => {
     try {
-        const { nome } = body;
+        const { nome_planta, nome_cientifico, tipo_planta, descricao_planta } = body;
 
         const results = await pool.query(
-            `INSERT INTO plantas (nome)
-             VALUES ($1)
-             RETURNING id_planta, nome`,
-            [nome]
+            `INSERT INTO plantas (nome_planta, nome_cientifico, tipo_planta, descricao_planta)
+             VALUES ($1, $2, $3, $4)
+             RETURNING id_planta, nome_planta, nome_cientifico, tipo_planta, descricao_planta`,
+            [nome_planta, nome_cientifico, tipo_planta, descricao_planta]
         );
 
         const planta = results.rows[0];
 
         return new Planta(
             planta.id_planta,
-            planta.nome
+            planta.nome_planta,
+            planta.nome_cientifico,
+            planta.tipo_planta,
+            planta.descricao_planta
         );
     } catch (err) {
         throw "Erro ao inserir a planta: " + err;
@@ -48,10 +54,10 @@ const updatePlantaDB = async (body) => {
 
         const results = await pool.query(
             `UPDATE plantas
-             SET nome = $2
+             SET nome_planta = $2, nome_cientifico = $3, tipo_planta = $4, descricao_planta = $5
              WHERE id_planta = $1
-             RETURNING id_planta, nome`,
-            [id_planta, nome]
+             RETURNING id_planta, nome_planta, nome_cientifico, tipo_planta, descricao_planta`,
+            [id_planta, nome_planta, nome_cientifico, tipo_planta, descricao_planta]
         );
 
         if (results.rowCount == 0) {
@@ -62,7 +68,10 @@ const updatePlantaDB = async (body) => {
 
         return new Planta(
             planta.id_planta,
-            planta.nome
+            planta.nome_planta,
+            planta.nome_cientifico,
+            planta.tipo_planta,
+            planta.descricao_planta
         );
     } catch (err) {
         throw "Erro ao alterar a planta: " + err;
@@ -70,16 +79,16 @@ const updatePlantaDB = async (body) => {
 };
 
 
-const deletePlantaDB = async (id_planta) => {
+const deletePlantaDB = async (codigo) => {
     try {
         const results = await pool.query(
             `DELETE FROM plantas
              WHERE id_planta = $1`,
-            [id_planta]
+            [codigo]
         );
 
         if (results.rowCount == 0) {
-            throw `Nenhum registro encontrado com o código ${id_planta} para ser removido`;
+            throw `Nenhum registro encontrado com o código ${codigo} para ser removido`;
         } else {
             return "Planta removida com sucesso";
         }
@@ -88,22 +97,25 @@ const deletePlantaDB = async (id_planta) => {
     }
 };
 
-const getPlantaPorIdDB = async (id_planta) => {
+const getPlantaPorIdDB = async (codigo) => {
     try {
         const results = await pool.query(
             `SELECT * FROM plantas
              WHERE id_planta = $1`,
-            [id_planta]
+            [codigo]
         );
 
         if (results.rowCount == 0) {
-            throw "Nenhum registro encontrado com o código: " + id_planta;
+            throw "Nenhum registro encontrado com o código: " + codigo;
         } else {
             const planta = results.rows[0];
 
             return new Planta(
                 planta.id_planta,
-                planta.nome
+                planta.nome_planta,
+                planta.nome_cientifico,
+                planta.tipo_planta,
+                planta.descricao_planta
             );
         }
                 

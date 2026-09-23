@@ -79,16 +79,16 @@ const updateCulturaDB = async (body) => {
 };
 
 
-const deleteCulturaDB = async (id_cultura) => {
+const deleteCulturaDB = async (codigo) => {
     try {
         const results = await pool.query(
             `DELETE FROM culturas
              WHERE id_cultura = $1`,
-            [id_cultura]
+            [codigo]
         );
 
         if (results.rowCount == 0) {
-            throw `Nenhum registro encontrado com o código ${id_cultura} para ser removido`;
+            throw `Nenhum registro encontrado com o código ${codigo} para ser removido`;
         } else {
             return "Cultura removida com sucesso";
         }
@@ -97,16 +97,16 @@ const deleteCulturaDB = async (id_cultura) => {
     }
 };
 
-const getCulturaPorIdDB = async (id_cultura) => {
+const getCulturaPorIdDB = async (codigo) => {
     try {
         const results = await pool.query(
             `SELECT * FROM culturas
              WHERE id_cultura = $1`,
-            [id_cultura]
+            [codigo]
         );
 
         if (results.rowCount == 0) {
-            throw "Nenhum registro encontrado com o código: " + id_cultura;
+            throw "Nenhum registro encontrado com o código: " + codigo;
         } else {
             const cultura = results.rows[0];
 

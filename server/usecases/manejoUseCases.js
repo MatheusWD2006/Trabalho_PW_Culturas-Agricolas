@@ -4,13 +4,16 @@ const Manejo = require('../entities/Manejos');
 const getManejosDB = async () => {
     try {
         const { rows } = await pool.query(
-            'SELECT * FROM manejos ORDER BY nome'
+            'SELECT * FROM manejos ORDER BY id_manejo'
         );
 
         return rows.map(
             (manejo) => new Manejo(
-                manejo.codigo,
-                manejo.nome
+                manejo.id_manejo,
+                manejo.cultura_id,
+                manejo.tipo_manejo,
+                manejo.descricao_manejo,
+                manejo.data_manejo
             )
         );
     } catch (err) {
@@ -20,20 +23,23 @@ const getManejosDB = async () => {
 
 const addManejoDB = async (body) => {
     try {
-        const { nome } = body;
+        const { cultura_id, tipo_manejo, descricao_manejo, data_manejo } = body;
 
         const results = await pool.query(
-            `INSERT INTO manejos (nome)
-             VALUES ($1)
-             RETURNING codigo, nome`,
-            [nome]
+            `INSERT INTO manejos (cultura_id, tipo_manejo, descricao_manejo, data_manejo)
+             VALUES ($1, $2, $3, $4)
+             RETURNING id_manejo, cultura_id, tipo_manejo, descricao_manejo, data_manejo`,
+            [cultura_id, tipo_manejo, descricao_manejo, data_manejo]
         );
 
         const manejo = results.rows[0];
 
         return new Manejo(
-            manejo.codigo,
-            manejo.nome
+            manejo.id_manejo,
+            manejo.cultura_id,
+            manejo.tipo_manejo,
+            manejo.descricao_manejo,
+            manejo.data_manejo
         );
     } catch (err) {
         throw "Erro ao inserir o manejo: " + err;
@@ -42,25 +48,28 @@ const addManejoDB = async (body) => {
 
 const updateManejoDB = async (body) => {
     try {
-        const { codigo, nome } = body;
+        const { id_manejo, cultura_id, tipo_manejo, descricao_manejo, data_manejo } = body;
 
         const results = await pool.query(
             `UPDATE manejos
-             SET nome = $2
-             WHERE codigo = $1
-             RETURNING codigo, nome`,
-            [codigo, nome]
+             SET cultura_id = $2, tipo_manejo = $3, descricao_manejo = $4, data_manejo = $5
+             WHERE id_manejo = $1
+             RETURNING id_manejo, cultura_id, tipo_manejo, descricao_manejo, data_manejo`,
+            [id_manejo, cultura_id, tipo_manejo, descricao_manejo, data_manejo]
         );
 
         if (results.rowCount == 0) {
-            throw `Nenhum registro encontrado com o código ${codigo} para ser alterado`;
+            throw `Nenhum registro encontrado com o código ${id_manejo} para ser alterado`;
         }
 
         const manejo = results.rows[0];
 
         return new Manejo(
-            manejo.codigo,
-            manejo.nome
+            manejo.id_manejo,
+            manejo.cultura_id,
+            manejo.tipo_manejo,
+            manejo.descricao_manejo,
+            manejo.data_manejo
         );
     } catch (err) {
         throw "Erro ao alterar o manejo: " + err;
@@ -72,7 +81,7 @@ const deleteManejoDB = async (codigo) => {
     try {
         const results = await pool.query(
             `DELETE FROM manejos
-             WHERE codigo = $1`,
+             WHERE id_manejo = $1`,
             [codigo]
         );
 
@@ -90,7 +99,7 @@ const getManejoPorCodigoDB = async (codigo) => {
     try {
         const results = await pool.query(
             `SELECT * FROM manejos
-             WHERE codigo = $1`,
+             WHERE id_manejo = $1`,
             [codigo]
         );
 
@@ -100,8 +109,11 @@ const getManejoPorCodigoDB = async (codigo) => {
             const manejo = results.rows[0];
 
             return new Manejo(
-                manejo.codigo,
-                manejo.nome
+                manejo.id_manejo,
+                manejo.cultura_id,
+                manejo.tipo_manejo,
+                manejo.descricao_manejo,
+                manejo.data_manejo
             );
         }
     } catch (err) {
