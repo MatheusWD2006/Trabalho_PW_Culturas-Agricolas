@@ -1,24 +1,19 @@
 const { Pool } = require('pg');
 
-const isProduction = process.env.NODE_ENV === 'production';
+// Passa a URL completa direto para o Pool
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
-let pool = null;
+// Testa a conexão ao iniciar o servidor
+pool.connect((err, client, release) => {
+  if (err) {
+    return console.error('Erro ao conectar no PostgreSQL:', err.stack);
+  }
+  console.log('Conectado ao PostgreSQL com sucesso!');
+  release();
+});
 
-if (isProduction) {
-    pool = new Pool({
-        connectionString: process.env.DATABASE_URL,
-        ssl: {
-            rejectUnauthorized: false
-        }
-    });
-} else {
-    pool = new Pool({
-        user: 'postgres',
-        host: 'localhost',
-        database: 'culturas_agricolas_pw',
-        password: 'postgres',
-        port: 5432
-    });
-}
-
-module.exports = { pool };
+module.exports = {
+  query: (text, params) => pool.query(text, params),
+};
