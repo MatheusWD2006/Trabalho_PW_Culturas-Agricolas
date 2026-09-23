@@ -1,9 +1,9 @@
-const { pool } = require('../config');
+const { query } = require('../config'); 
 const Planta = require('../entities/Plantas');
 
 const getPlantasDB = async () => {
     try {
-        const { rows } = await pool.query(
+        const { rows } = await query(
             'SELECT * FROM plantas ORDER BY nome_planta'
         );
 
@@ -25,7 +25,7 @@ const addPlantaDB = async (body) => {
     try {
         const { nome_planta, nome_cientifico, tipo_planta, descricao_planta } = body;
 
-        const results = await pool.query(
+        const results = await query(
             `INSERT INTO plantas (nome_planta, nome_cientifico, tipo_planta, descricao_planta)
              VALUES ($1, $2, $3, $4)
              RETURNING id_planta, nome_planta, nome_cientifico, tipo_planta, descricao_planta`,
@@ -52,7 +52,7 @@ const updatePlantaDB = async (body) => {
     try {
         const { id_planta, nome } = body;
 
-        const results = await pool.query(
+        const results = await query(
             `UPDATE plantas
              SET nome_planta = $2, nome_cientifico = $3, tipo_planta = $4, descricao_planta = $5
              WHERE id_planta = $1
@@ -81,7 +81,7 @@ const updatePlantaDB = async (body) => {
 
 const deletePlantaDB = async (codigo) => {
     try {
-        const results = await pool.query(
+        const results = await query(
             `DELETE FROM plantas
              WHERE id_planta = $1`,
             [codigo]
@@ -99,7 +99,7 @@ const deletePlantaDB = async (codigo) => {
 
 const getPlantaPorCodigoDB = async (codigo) => {
     try {
-        const results = await pool.query(
+        const results = await query(
             `SELECT * FROM plantas
              WHERE id_planta = $1`,
             [codigo]

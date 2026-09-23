@@ -1,9 +1,9 @@
-const { pool } = require('../config');
+const { query } = require('../config'); 
 const Manejo = require('../entities/Manejos');
 
 const getManejosDB = async () => {
     try {
-        const { rows } = await pool.query(
+        const { rows } = await query(
             'SELECT * FROM manejos ORDER BY id_manejo'
         );
 
@@ -25,7 +25,7 @@ const addManejoDB = async (body) => {
     try {
         const { cultura_id, tipo_manejo, descricao_manejo, data_manejo } = body;
 
-        const results = await pool.query(
+        const results = await query(
             `INSERT INTO manejos (cultura_id, tipo_manejo, descricao_manejo, data_manejo)
              VALUES ($1, $2, $3, $4)
              RETURNING id_manejo, cultura_id, tipo_manejo, descricao_manejo, data_manejo`,
@@ -50,7 +50,7 @@ const updateManejoDB = async (body) => {
     try {
         const { id_manejo, cultura_id, tipo_manejo, descricao_manejo, data_manejo } = body;
 
-        const results = await pool.query(
+        const results = await query(
             `UPDATE manejos
              SET cultura_id = $2, tipo_manejo = $3, descricao_manejo = $4, data_manejo = $5
              WHERE id_manejo = $1
@@ -79,7 +79,7 @@ const updateManejoDB = async (body) => {
 
 const deleteManejoDB = async (codigo) => {
     try {
-        const results = await pool.query(
+        const results = await query(
             `DELETE FROM manejos
              WHERE id_manejo = $1`,
             [codigo]
@@ -97,7 +97,7 @@ const deleteManejoDB = async (codigo) => {
 
 const getManejoPorCodigoDB = async (codigo) => {
     try {
-        const results = await pool.query(
+        const results = await query(
             `SELECT * FROM manejos
              WHERE id_manejo = $1`,
             [codigo]

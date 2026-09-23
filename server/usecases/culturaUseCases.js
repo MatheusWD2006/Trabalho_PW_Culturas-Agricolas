@@ -1,9 +1,9 @@
-const { pool } = require('../config');
+const { querry } = require('../config');
 const Cultura = require('../entities/Culturas');
 
 const getCulturasDB = async () => {
     try {
-        const { rows } = await pool.query(
+        const { rows } = await query(
             'SELECT * FROM culturas ORDER BY nome'
         );
 
@@ -25,7 +25,7 @@ const addCulturaDB = async (body) => {
     try {
         const { planta_id, hectares, data_plantio, data_colheita } = body;
 
-        const results = await pool.query(
+        const results = await query(
             `INSERT INTO culturas (planta_id, hectares, data_plantio, data_colheita)
              VALUES ($1, $2, $3, $4)
              RETURNING id_cultura, planta_id, hectares, data_plantio, data_colheita`,
@@ -52,7 +52,7 @@ const updateCulturaDB = async (body) => {
     try {
         const { id_cultura, planta_id, hectares, data_plantio, data_colheita } = body;
 
-        const results = await pool.query(
+        const results = await query(
             `UPDATE culturas
              SET planta_id = $2, hectares = $3, data_plantio = $4, data_colheita = $5
              WHERE id_cultura = $1
@@ -81,7 +81,7 @@ const updateCulturaDB = async (body) => {
 
 const deleteCulturaDB = async (codigo) => {
     try {
-        const results = await pool.query(
+        const results = await query(
             `DELETE FROM culturas
              WHERE id_cultura = $1`,
             [codigo]
@@ -99,7 +99,7 @@ const deleteCulturaDB = async (codigo) => {
 
 const getCulturaPorCodigoDB = async (codigo) => {
     try {
-        const results = await pool.query(
+        const results = await query(
             `SELECT * FROM culturas
              WHERE id_cultura = $1`,
             [codigo]
