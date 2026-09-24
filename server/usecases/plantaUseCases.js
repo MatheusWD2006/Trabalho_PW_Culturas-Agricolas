@@ -1,4 +1,4 @@
-const { query } = require('../config'); 
+const { query } = require('../configDB'); 
 const Planta = require('../entities/Plantas');
 
 const getPlantasDB = async () => {

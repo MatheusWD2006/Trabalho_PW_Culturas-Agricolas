@@ -1,130 +1,139 @@
-const { query } = require('../config'); 
-const Manejo = require('../entities/Manejos');
+const { query } = require("../configDB");
+const Manejo = require("../entities/Manejos");
+const { formatarDataBR } = require('../utils/dateUtils');
 
 const getManejosDB = async () => {
-    try {
-        const { rows } = await query(
-            'SELECT * FROM manejos ORDER BY id_manejo'
-        );
-
-        return rows.map(
-            (manejo) => new Manejo(
-                manejo.id_manejo,
-                manejo.cultura_id,
-                manejo.tipo_manejo,
-                manejo.descricao_manejo,
-                manejo.data_manejo
-            )
-        );
-    } catch (err) {
-        throw "Erro : " + err;
-    }
+  try {
+    const { rows } = await query("SELECT * FROM manejos ORDER BY id_manejo");
+    
+    return rows.map(
+      (manejo) =>
+        new Manejo(
+          manejo.id_manejo,
+          manejo.cultura_id,
+          manejo.tipo_manejo,
+          manejo.descricao_manejo,
+          formatarDataBR(manejo.data_manejo),
+        ),
+    );
+  } catch (err) {
+    throw "Erro : " + err;
+  }
 };
 
 const addManejoDB = async (body) => {
-    try {
-        const { cultura_id, tipo_manejo, descricao_manejo, data_manejo } = body;
+  try {
+    const { cultura_id, tipo_manejo, descricao_manejo, data_manejo } = body;
 
-        const results = await query(
-            `INSERT INTO manejos (cultura_id, tipo_manejo, descricao_manejo, data_manejo)
+    const results = await query(
+      `INSERT INTO manejos (cultura_id, tipo_manejo, descricao_manejo, data_manejo)
              VALUES ($1, $2, $3, $4)
              RETURNING id_manejo, cultura_id, tipo_manejo, descricao_manejo, data_manejo`,
-            [cultura_id, tipo_manejo, descricao_manejo, data_manejo]
-        );
+      [cultura_id, tipo_manejo, descricao_manejo, data_manejo],
+    );
 
-        const manejo = results.rows[0];
+    const manejo = results.rows[0];
 
-        return new Manejo(
-            manejo.id_manejo,
-            manejo.cultura_id,
-            manejo.tipo_manejo,
-            manejo.descricao_manejo,
-            manejo.data_manejo
-        );
-    } catch (err) {
-        throw "Erro ao inserir o manejo: " + err;
+    return new Manejo(
+      manejo.id_manejo,
+      manejo.cultura_id,
+      manejo.tipo_manejo,
+      manejo.descricao_manejo,
+      formatarDataBR(manejo.data_manejo),
+    );
+  } catch (err) {
+    // Trata a chave estrangeira (cultura_id) para Manejos
+    if (err.code === "23503") {
+      throw `A cultura com o código ${body.cultura_id} não existe no cadastro.`;
     }
+    throw "Erro ao inserir o manejo: " + err;
+  }
 };
 
 const updateManejoDB = async (body) => {
-    try {
-        const { id_manejo, cultura_id, tipo_manejo, descricao_manejo, data_manejo } = body;
+  try {
+    const {
+      id_manejo,
+      cultura_id,
+      tipo_manejo,
+      descricao_manejo,
+      data_manejo,
+    } = body;
 
-        const results = await query(
-            `UPDATE manejos
+    const results = await query(
+      `UPDATE manejos
              SET cultura_id = $2, tipo_manejo = $3, descricao_manejo = $4, data_manejo = $5
              WHERE id_manejo = $1
              RETURNING id_manejo, cultura_id, tipo_manejo, descricao_manejo, data_manejo`,
-            [id_manejo, cultura_id, tipo_manejo, descricao_manejo, data_manejo]
-        );
+      [id_manejo, cultura_id, tipo_manejo, descricao_manejo, data_manejo],
+    );
 
-        if (results.rowCount == 0) {
-            throw `Nenhum registro encontrado com o código ${id_manejo} para ser alterado`;
-        }
-
-        const manejo = results.rows[0];
-
-        return new Manejo(
-            manejo.id_manejo,
-            manejo.cultura_id,
-            manejo.tipo_manejo,
-            manejo.descricao_manejo,
-            manejo.data_manejo
-        );
-    } catch (err) {
-        throw "Erro ao alterar o manejo: " + err;
+    if (results.rowCount == 0) {
+      throw `Nenhum registro encontrado com o código ${id_manejo} para ser alterado`;
     }
+
+    const manejo = results.rows[0];
+
+    return new Manejo(
+      manejo.id_manejo,
+      manejo.cultura_id,
+      manejo.tipo_manejo,
+      manejo.descricao_manejo,
+      formatarDataBR(manejo.data_manejo),
+    );
+  } catch (err) {
+    throw "Erro ao alterar o manejo: " + err;
+  }
 };
 
-
 const deleteManejoDB = async (codigo) => {
-    try {
-        const results = await query(
-            `DELETE FROM manejos
+  try {
+    const results = await query(
+      `DELETE FROM manejos
              WHERE id_manejo = $1`,
-            [codigo]
-        );
+      [codigo],
+    );
 
-        if (results.rowCount == 0) {
-            throw `Nenhum registro encontrado com o código ${codigo} para ser removido`;
-        } else {
-            return "Manejo removido com sucesso";
-        }
-    } catch (err) {
-        throw "Erro ao remover o manejo: " + err;
+    if (results.rowCount == 0) {
+      throw `Nenhum registro encontrado com o código ${codigo} para ser removido`;
+    } else {
+      return "Manejo removido com sucesso";
     }
+  } catch (err) {
+    throw "Erro ao remover o manejo: " + err;
+  }
 };
 
 const getManejoPorCodigoDB = async (codigo) => {
-    try {
-        const results = await query(
-            `SELECT * FROM manejos
+  try {
+    const results = await query(
+      `SELECT * FROM manejos
              WHERE id_manejo = $1`,
-            [codigo]
-        );
+      [codigo],
+    );
 
-        if (results.rowCount == 0) {
-            throw "Nenhum registro encontrado com o código: " + codigo;
-        } else {
-            const manejo = results.rows[0];
+    if (results.rowCount == 0) {
+      throw "Nenhum registro encontrado com o código: " + codigo;
+    } else {
+      const manejo = results.rows[0];
 
-            return new Manejo(
-                manejo.id_manejo,
-                manejo.cultura_id,
-                manejo.tipo_manejo,
-                manejo.descricao_manejo,
-                manejo.data_manejo
-            );
-        }
-    } catch (err) {
-        throw "Erro ao recuperar o manejo: " + err;
+      return new Manejo(
+        manejo.id_manejo,
+        manejo.cultura_id,
+        manejo.tipo_manejo,
+        manejo.descricao_manejo,
+        formatarDataBR(manejo.data_manejo),
+      );
     }
+  } catch (err) {
+    throw "Erro ao recuperar o manejo: " + err;
+  }
 };
 
 module.exports = {
-    getManejosDB,
-    addManejoDB,
-    updateManejoDB,
-    deleteManejoDB,
-    getManejoPorCodigoDB
+  getManejosDB,
+  addManejoDB,
+  updateManejoDB,
+  deleteManejoDB,
+  getManejoPorCodigoDB,
 };
