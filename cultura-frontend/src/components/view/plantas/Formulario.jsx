@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
 import Alerta from '../../common/Alerta';
-import ManejoContext from './ManejoContext';
+import PlantaContext from './PlantaContext';
 
 import Col from 'react-bootstrap/Col';
 
@@ -17,7 +17,7 @@ function Formulario() {
         alerta,
         exibirForm,
         setExibirForm
-    } = useContext(ManejoContext);
+    } = useContext(PlantaContext);
 
     return (
         <Dialogo

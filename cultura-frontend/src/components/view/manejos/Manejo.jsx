@@ -5,7 +5,7 @@ import {
   getManejoPorCodigoAPI,
   deleteManejoPorCodigoAPI,
   cadastraManejoAPI,
-} from "../../../services/CulturaServico";
+} from "../../../services/ManejoServico";
 import Tabela from "./Tabela";
 import Formulario from "./Formulario";
 import Carregando from "../../common/Carregando";
