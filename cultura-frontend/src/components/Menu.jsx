@@ -24,18 +24,18 @@ function Menu() {
                 className="nav-link active"
                 aria-current="page"
                 exact="true"
-                to="/"
+                to="/home"
               >
                 Home
               </NavLink>
               <NavDropdown title="Manutenções" id="basic-nav-dropdown">
-                <NavLink className="dropdown-item" exact="true" to="categorias">
+                <NavLink className="dropdown-item" exact="true" to="plantas">
                   Plantas
                 </NavLink>
                 <NavLink className="dropdown-item" exact="true" to="manejos">
                   Manejos
                 </NavLink>
-                <NavLink className="dropdown-item" exact="true" to="produtos">
+                <NavLink className="dropdown-item" exact="true" to="culturas">
                   Culturas
                 </NavLink>
               </NavDropdown>

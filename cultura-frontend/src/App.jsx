@@ -11,6 +11,7 @@ import Home from "./components/view/Home";
 import Cultura from "./components/view/culturas/Cultura";
 import Planta from "./components/view/plantas/Planta";
 import Manejo from "./components/view/manejos/Manejo";
+import Sobre from "./components/view/Sobre"
 
 const router = createBrowserRouter([
     {
@@ -20,7 +21,7 @@ const router = createBrowserRouter([
         children: [
 
             {
-                index: true,
+                path: "home",
                 element: <Home />,
             },
 
@@ -37,6 +38,11 @@ const router = createBrowserRouter([
             {
                 path: "manejos",
                 element: <Manejo/>
+            },
+
+            {
+                path: "sobre",
+                element: <Sobre/>
             }
 
         ]

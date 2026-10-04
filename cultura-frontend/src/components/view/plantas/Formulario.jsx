@@ -22,7 +22,7 @@ function Formulario() {
     return (
         <Dialogo
             id="modalEdicao"
-            titulo="Manejo"
+            titulo="Planta"
             idform="formulario"
             acaoCadastrar={acaoCadastrar}
             exibirForm={exibirForm}
@@ -30,19 +30,6 @@ function Formulario() {
         >
 
             <Alerta alerta={alerta} />
-
-            <Col xs={12} md={12}>
-                <CampoEntrada
-                    value={objeto.id_planta}
-                    id="txtIDplanta"
-                    name="id_planta"
-                    label="ID da Planta"
-                    tipo="number"
-                    onchange={handleChange}
-                    readonly={true}
-                    maxCaracteres={5}
-                />
-            </Col>
 
            <Col xs={12} md={12}>
                 <CampoEntrada
@@ -53,7 +40,7 @@ function Formulario() {
                     tipo="text"
                     onchange={handleChange}
                     readonly={true}
-                    maxCaracteres={5}
+                    maxCaracteres={100}
                 />
             </Col>
 
@@ -66,7 +53,7 @@ function Formulario() {
                     tipo="text"
                     onchange={handleChange}
                     readonly={true}
-                    maxCaracteres={5}
+                    maxCaracteres={150}
                 />
             </Col>
 
@@ -79,7 +66,7 @@ function Formulario() {
                     tipo="text"
                     onchange={handleChange}
                     readonly={true}
-                    maxCaracteres={5}
+                    maxCaracteres={50}
                 />
             </Col>
 
@@ -92,7 +79,7 @@ function Formulario() {
                     tipo="text"
                     onchange={handleChange}
                     readonly={true}
-                    maxCaracteres={5}
+                    maxCaracteres={200}
                 />
             </Col>
 
