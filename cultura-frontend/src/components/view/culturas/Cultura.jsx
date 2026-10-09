@@ -6,6 +6,7 @@ import {
   deleteCulturaPorCodigoAPI,
   cadastraCulturaAPI,
 } from "../../../services/CulturaServico";
+import { getPlantasAPI } from "../../../services/PlantaServico"; // Importa API de Plantas
 import Tabela from "./Tabela";
 import Formulario from "./Formulario";
 import Carregando from "../../common/Carregando";
@@ -13,14 +14,17 @@ import Carregando from "../../common/Carregando";
 function Cultura() {
   const [alerta, setAlerta] = useState({ status: "", message: "" });
   const [listaObjetos, setListaObjetos] = useState([]);
+  const [listaPlantas, setListaPlantas] = useState([]); // Estado para o Select
   const [carregando, setCarregando] = useState(true);
 
   const recuperaCulturas = async () => {
     setCarregando(true);
-
     setListaObjetos(await getCulturasAPI());
-
     setCarregando(false);
+  };
+
+  const recuperaPlantas = async () => {
+    setListaPlantas(await getPlantasAPI());
   };
 
   const remover = async (codigo) => {
@@ -33,25 +37,30 @@ function Cultura() {
 
   useEffect(() => {
     recuperaCulturas();
+    recuperaPlantas(); // Busca as plantas ao carregar
   }, []);
 
-  // Novos estados e métodos
   const [editar, setEditar] = useState(false);
   const [exibirForm, setExibirForm] = useState(false);
 
+  // Objeto alinhado com a tabela/entidade de Cultura
   const [objeto, setObjeto] = useState({
-    codigo: "",
-    nome: "",
-    descricao: "",
-    sigla: "",
+    id_cultura: 0,
+    planta_id: "",
+    hectares: "",
+    data_plantio: "",
+    data_colheita: "",
   });
 
   const novoObjeto = () => {
     setEditar(false);
     setAlerta({ status: "", message: "" });
     setObjeto({
-      codigo: 0,
-      nome: "",
+      id_cultura: 0,
+      planta_id: "",
+      hectares: "",
+      data_plantio: "",
+      data_colheita: "",
     });
     setExibirForm(true);
   };
@@ -69,12 +78,10 @@ function Cultura() {
 
     try {
       let retornoAPI = await cadastraCulturaAPI(objeto, metodo);
-
       setAlerta({
         status: retornoAPI.status,
         message: retornoAPI.message,
       });
-
       setObjeto(retornoAPI.objeto);
 
       if (!editar) {
@@ -97,11 +104,11 @@ function Cultura() {
     });
   };
 
-  
   return (
     <CulturaContext.Provider
       value={{
         listaObjetos,
+        listaPlantas, // Disponibilizado no Contexto
         alerta,
         remover,
         objeto,
@@ -111,6 +118,7 @@ function Cultura() {
         novoObjeto,
         exibirForm,
         setExibirForm,
+        carregando,
       }}
     >
       <Carregando carregando={carregando}>

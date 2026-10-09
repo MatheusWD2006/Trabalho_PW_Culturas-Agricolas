@@ -17,9 +17,7 @@ function Planta() {
 
   const recuperaPlantas = async () => {
     setCarregando(true);
-
     setListaObjetos(await getPlantasAPI());
-
     setCarregando(false);
   };
 
@@ -35,23 +33,27 @@ function Planta() {
     recuperaPlantas();
   }, []);
 
-  // Novos estados e métodos
   const [editar, setEditar] = useState(false);
   const [exibirForm, setExibirForm] = useState(false);
 
+  // Objeto alinhado com a tabela/entidade de Planta
   const [objeto, setObjeto] = useState({
-    codigo: "",
-    nome: "",
-    descricao: "",
-    sigla: "",
+    id_planta: 0,
+    nome_planta: "",
+    nome_cientifico: "",
+    tipo_planta: "",
+    descricao_planta: "",
   });
 
   const novoObjeto = () => {
     setEditar(false);
     setAlerta({ status: "", message: "" });
     setObjeto({
-      codigo: 0,
-      nome: "",
+      id_planta: 0,
+      nome_planta: "",
+      nome_cientifico: "",
+      tipo_planta: "",
+      descricao_planta: "",
     });
     setExibirForm(true);
   };
@@ -69,12 +71,10 @@ function Planta() {
 
     try {
       let retornoAPI = await cadastraPlantaAPI(objeto, metodo);
-
       setAlerta({
         status: retornoAPI.status,
         message: retornoAPI.message,
       });
-
       setObjeto(retornoAPI.objeto);
 
       if (!editar) {
@@ -97,7 +97,6 @@ function Planta() {
     });
   };
 
-  
   return (
     <PlantaContext.Provider
       value={{
@@ -111,6 +110,7 @@ function Planta() {
         novoObjeto,
         exibirForm,
         setExibirForm,
+        carregando,
       }}
     >
       <Carregando carregando={carregando}>

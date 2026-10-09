@@ -1,6 +1,6 @@
 const { query } = require("../configDB");
 const Cultura = require("../entities/Culturas");
-const { formatarDataBR } = require('../utils/dateUtils');
+const { formatarDataBR, validarIntervaloDatas } = require('../utils/dateUtils');
 
 const getCulturasDB = async () => {
   try {
@@ -25,11 +25,14 @@ const addCulturaDB = async (body) => {
   try {
     const { planta_id, hectares, data_plantio, data_colheita } = body;
 
+    // Executa as validações antes da gravação
+    validarIntervaloDatas(data_plantio, data_colheita);
+
     const results = await query(
       `INSERT INTO culturas (planta_id, hectares, data_plantio, data_colheita)
              VALUES ($1, $2, $3, $4)
              RETURNING id_cultura, planta_id, hectares, data_plantio, data_colheita`,
-      [planta_id, hectares, data_plantio, data_colheita],
+      [planta_id, hectares, data_plantio, data_colheita || null],
     );
 
     const cultura = results.rows[0];
@@ -42,25 +45,27 @@ const addCulturaDB = async (body) => {
       formatarDataBR(cultura.data_colheita),
     );
   } catch (err) {
-    // Se a chave estrangeira (planta_id) não existir no banco
     if (err.code === "23503") {
       throw `A planta com o código ${body.planta_id} não existe no cadastro.`;
     }
-    throw "Erro ao inserir a cultura: " + err;
+    // Se for um erro lançado pelas nossas validações de data, repassa diretamente a mensagem
+    throw typeof err === "string" ? err : "Erro ao inserir a cultura: " + err;
   }
 };
 
 const updateCulturaDB = async (body) => {
   try {
-    const { id_cultura, planta_id, hectares, data_plantio, data_colheita } =
-      body;
+    const { id_cultura, planta_id, hectares, data_plantio, data_colheita } = body;
+
+    // Executa as validações antes da alteração
+    validarIntervaloDatas(data_plantio, data_colheita);
 
     const results = await query(
       `UPDATE culturas
              SET planta_id = $2, hectares = $3, data_plantio = $4, data_colheita = $5
              WHERE id_cultura = $1
              RETURNING id_cultura, planta_id, hectares, data_plantio, data_colheita`,
-      [id_cultura, planta_id, hectares, data_plantio, data_colheita],
+      [id_cultura, planta_id, hectares, data_plantio, data_colheita || null],
     );
 
     if (results.rowCount == 0) {
@@ -77,7 +82,7 @@ const updateCulturaDB = async (body) => {
       formatarDataBR(cultura.data_colheita),
     );
   } catch (err) {
-    throw "Erro ao alterar a cultura: " + err;
+    throw typeof err === "string" ? err : "Erro ao alterar a cultura: " + err;
   }
 };
 

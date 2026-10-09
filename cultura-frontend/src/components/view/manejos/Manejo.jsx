@@ -6,6 +6,7 @@ import {
   deleteManejoPorCodigoAPI,
   cadastraManejoAPI,
 } from "../../../services/ManejoServico";
+import { getCulturasAPI } from "../../../services/CulturaServico"; // Importa API de Culturas
 import Tabela from "./Tabela";
 import Formulario from "./Formulario";
 import Carregando from "../../common/Carregando";
@@ -13,14 +14,17 @@ import Carregando from "../../common/Carregando";
 function Manejo() {
   const [alerta, setAlerta] = useState({ status: "", message: "" });
   const [listaObjetos, setListaObjetos] = useState([]);
+  const [listaCulturas, setListaCulturas] = useState([]); // Estado para o Select
   const [carregando, setCarregando] = useState(true);
 
   const recuperaManejos = async () => {
     setCarregando(true);
-
     setListaObjetos(await getManejosAPI());
-
     setCarregando(false);
+  };
+
+  const recuperaCulturas = async () => {
+    setListaCulturas(await getCulturasAPI());
   };
 
   const remover = async (codigo) => {
@@ -33,25 +37,30 @@ function Manejo() {
 
   useEffect(() => {
     recuperaManejos();
+    recuperaCulturas(); // Busca as culturas ao carregar
   }, []);
 
-  // Novos estados e métodos
   const [editar, setEditar] = useState(false);
   const [exibirForm, setExibirForm] = useState(false);
 
+  // Objeto alinhado com a tabela/entidade de Manejo
   const [objeto, setObjeto] = useState({
-    codigo: "",
-    nome: "",
-    descricao: "",
-    sigla: "",
+    id_manejo: 0,
+    cultura_id: "",
+    tipo_manejo: "",
+    descricao_manejo: "",
+    data_manejo: "",
   });
 
   const novoObjeto = () => {
     setEditar(false);
     setAlerta({ status: "", message: "" });
     setObjeto({
-      codigo: 0,
-      nome: "",
+      id_manejo: 0,
+      cultura_id: "",
+      tipo_manejo: "",
+      descricao_manejo: "",
+      data_manejo: "",
     });
     setExibirForm(true);
   };
@@ -69,12 +78,10 @@ function Manejo() {
 
     try {
       let retornoAPI = await cadastraManejoAPI(objeto, metodo);
-
       setAlerta({
         status: retornoAPI.status,
         message: retornoAPI.message,
       });
-
       setObjeto(retornoAPI.objeto);
 
       if (!editar) {
@@ -97,11 +104,11 @@ function Manejo() {
     });
   };
 
-
   return (
     <ManejoContext.Provider
       value={{
         listaObjetos,
+        listaCulturas, // Disponibilizado no Contexto
         alerta,
         remover,
         objeto,
@@ -111,6 +118,7 @@ function Manejo() {
         novoObjeto,
         exibirForm,
         setExibirForm,
+        carregando,
       }}
     >
       <Carregando carregando={carregando}>

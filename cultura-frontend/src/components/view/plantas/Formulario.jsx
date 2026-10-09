@@ -1,11 +1,10 @@
 import { useContext } from 'react';
-
 import Alerta from '../../common/Alerta';
 import PlantaContext from './PlantaContext';
-
 import Col from 'react-bootstrap/Col';
 
 import CampoEntrada from '../../common/CampoEntrada';
+import CampoEntradaTextArea from '../../common/CampoEntradaTextArea';
 import Dialogo from '../../common/Dialogo';
 
 function Formulario() {
@@ -31,60 +30,78 @@ function Formulario() {
 
             <Alerta alerta={alerta} />
 
-           <Col xs={12} md={12}>
+            {/* Campo de ID (Apenas Leitura) */}
+            <Col xs={12} md={12}>
                 <CampoEntrada
-                    value={objeto.nome_planta}
+                    value={objeto.id_planta || objeto.codigo || ''}
+                    id="txtIDplanta"
+                    name="id_planta"
+                    label="ID da Planta"
+                    tipo="number"
+                    onchange={handleChange}
+                    readonly={true}
+                />
+            </Col>
+
+            {/* Nome da Planta */}
+            <Col xs={12} md={12}>
+                <CampoEntrada
+                    value={objeto.nome_planta || ''}
                     id="txtNomePlanta"
                     name="nome_planta"
                     label="Nome da Planta"
                     tipo="text"
                     onchange={handleChange}
-                    readonly={true}
+                    requerido={true}
+                    msginvalido="Informe o nome da planta"
                     maxCaracteres={100}
                 />
             </Col>
 
+            {/* Nome Científico */}
             <Col xs={12} md={12}>
                 <CampoEntrada
-                    value={objeto.nome_cientifico}
+                    value={objeto.nome_cientifico || ''}
                     id="txtNomeCientifico"
                     name="nome_cientifico"
                     label="Nome Científico"
                     tipo="text"
                     onchange={handleChange}
-                    readonly={true}
+                    requerido={false}
                     maxCaracteres={150}
                 />
             </Col>
 
+            {/* Tipo da Planta */}
             <Col xs={12} md={12}>
                 <CampoEntrada
-                    value={objeto.tipo_planta}
+                    value={objeto.tipo_planta || ''}
                     id="txtTipoPlanta"
                     name="tipo_planta"
                     label="Tipo da Planta"
                     tipo="text"
                     onchange={handleChange}
-                    readonly={true}
+                    requerido={true}
+                    msginvalido="Informe o tipo da planta"
                     maxCaracteres={50}
                 />
             </Col>
 
+            {/* Descrição da Planta com TextArea */}
             <Col xs={12} md={12}>
-                <CampoEntrada
-                    value={objeto.descricao_planta}
+                <CampoEntradaTextArea
+                    value={objeto.descricao_planta || ''}
                     id="txtDescricaoPlanta"
                     name="descricao_planta"
                     label="Descrição da Planta"
-                    tipo="text"
                     onchange={handleChange}
-                    readonly={true}
-                    maxCaracteres={200}
+                    requerido={false}
+                    maxCaracteres={300}
                 />
             </Col>
 
         </Dialogo>
-    )
+    );
 }
 
 export default Formulario;

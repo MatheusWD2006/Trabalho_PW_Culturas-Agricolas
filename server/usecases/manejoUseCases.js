@@ -1,7 +1,6 @@
 const { query } = require("../configDB");
 const Manejo = require("../entities/Manejos");
-const { formatarDataBR } = require('../utils/dateUtils');
-
+const { formatarDataBR, eDataValida } = require('../utils/dateUtils');
 const getManejosDB = async () => {
   try {
     const { rows } = await query("SELECT * FROM manejos ORDER BY id_manejo");
@@ -25,6 +24,10 @@ const addManejoDB = async (body) => {
   try {
     const { cultura_id, tipo_manejo, descricao_manejo, data_manejo } = body;
 
+    if (!eDataValida(data_manejo)) {
+      throw "A data do manejo informada é inválida ou inexistente.";
+    }
+
     const results = await query(
       `INSERT INTO manejos (cultura_id, tipo_manejo, descricao_manejo, data_manejo)
              VALUES ($1, $2, $3, $4)
@@ -42,23 +45,20 @@ const addManejoDB = async (body) => {
       formatarDataBR(manejo.data_manejo),
     );
   } catch (err) {
-    // Trata a chave estrangeira (cultura_id) para Manejos
     if (err.code === "23503") {
       throw `A cultura com o código ${body.cultura_id} não existe no cadastro.`;
     }
-    throw "Erro ao inserir o manejo: " + err;
+    throw typeof err === "string" ? err : "Erro ao inserir o manejo: " + err;
   }
 };
 
 const updateManejoDB = async (body) => {
   try {
-    const {
-      id_manejo,
-      cultura_id,
-      tipo_manejo,
-      descricao_manejo,
-      data_manejo,
-    } = body;
+    const { id_manejo, cultura_id, tipo_manejo, descricao_manejo, data_manejo } = body;
+
+    if (!eDataValida(data_manejo)) {
+      throw "A data do manejo informada é inválida ou inexistente.";
+    }
 
     const results = await query(
       `UPDATE manejos
@@ -82,7 +82,7 @@ const updateManejoDB = async (body) => {
       formatarDataBR(manejo.data_manejo),
     );
   } catch (err) {
-    throw "Erro ao alterar o manejo: " + err;
+    throw typeof err === "string" ? err : "Erro ao alterar o manejo: " + err;
   }
 };
 
