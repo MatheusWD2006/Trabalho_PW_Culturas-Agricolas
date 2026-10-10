@@ -29,6 +29,8 @@ const addPlanta = async (request, response) => {
 };
 
 const updatePlanta = async (request, response) => {
+    request.body.id_planta = parseInt(request.params.codigo);
+
     await updatePlantaDB(request.body)
         .then(data => response.status(200).json({
             status: "success",
@@ -40,7 +42,6 @@ const updatePlanta = async (request, response) => {
             message: err
         }));
 };
-
 const deletePlanta = async (request, response) => {
     await deletePlantaDB(
         parseInt(request.params.codigo)

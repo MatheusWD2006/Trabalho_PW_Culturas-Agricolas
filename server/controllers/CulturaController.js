@@ -29,6 +29,9 @@ const addCultura = async (request, response) => {
 };
 
 const updateCultura = async (request, response) => {
+
+    request.body.id_cultura = parseInt(request.params.codigo);
+
     await updateCulturaDB(request.body)
         .then(data => response.status(200).json({
             status: "success",

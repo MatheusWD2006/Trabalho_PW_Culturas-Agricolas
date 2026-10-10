@@ -1,5 +1,4 @@
 const { Router } = require('express');
-
 const {
     getCulturas,
     addCultura,
@@ -12,11 +11,11 @@ const rotasCultura = new Router();
 
 rotasCultura.route('/Cultura')
     .get(getCulturas)
-    .post(addCultura)
-    .put(updateCultura);
+    .post(addCultura); 
 
 rotasCultura.route('/Cultura/:codigo')
     .get(getCulturaPorCodigo)
+    .put(updateCultura)    
     .delete(deleteCultura);
 
 module.exports = rotasCultura;

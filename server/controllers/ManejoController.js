@@ -29,10 +29,13 @@ const addManejo = async (request, response) => {
 };
 
 const updateManejo = async (request, response) => {
+    // Injeta o ID da URL no corpo da requisição
+    request.body.id_manejo = parseInt(request.params.codigo);
+
     await updateManejoDB(request.body)
         .then(data => response.status(200).json({
             status: "success",
-            message: "Manejo alterada",
+            message: "Manejo alterado",
             objeto: data
         }))
         .catch(err => response.status(400).json({

@@ -1,5 +1,4 @@
 const { Router } = require('express');
-
 const {
     getManejos,
     addManejo,
@@ -12,11 +11,11 @@ const rotasManejo = new Router();
 
 rotasManejo.route('/Manejo')
     .get(getManejos)
-    .post(addManejo)
-    .put(updateManejo);
+    .post(addManejo); 
 
 rotasManejo.route('/Manejo/:codigo')
     .get(getManejoPorCodigo)
+    .put(updateManejo)  
     .delete(deleteManejo);
 
 module.exports = rotasManejo;

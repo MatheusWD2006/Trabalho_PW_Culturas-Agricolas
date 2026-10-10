@@ -6,17 +6,17 @@ const {
     updatePlanta,
     deletePlanta,
     getPlantaPorCodigo
-} = require('../controllers/plantaController');
+} = require('../controllers/PlantaController');
 
 const rotasPlanta = new Router();
 
 rotasPlanta.route('/planta')
     .get(getPlantas)
-    .post(addPlanta)
-    .put(updatePlanta);
+    .post(addPlanta);
 
 rotasPlanta.route('/planta/:codigo')
     .get(getPlantaPorCodigo)
+    .put(updatePlanta)    
     .delete(deletePlanta);
 
 module.exports = rotasPlanta;
