@@ -20,14 +20,6 @@ function Menu() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <NavLink
-                className="nav-link active"
-                aria-current="page"
-                exact="true"
-                to="/home"
-              >
-                Home
-              </NavLink>
               <NavDropdown title="Manutenções" id="basic-nav-dropdown">
                 <NavLink className="dropdown-item" exact="true" to="plantas">
                   Plantas

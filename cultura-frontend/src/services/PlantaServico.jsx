@@ -48,8 +48,15 @@ export const deletePlantaPorCodigoAPI = async codigo => {
 }
 
 export const cadastraPlantaAPI = async (objeto, metodo) => {
+    // Se o método for PUT, adicionamos o ID/código na URL
+    let url = `${API_URL}/planta`;
+    if (metodo === "PUT") {
+        const id = objeto.id_planta || objeto.codigo;
+        url = `${API_URL}/planta/${id}`;
+    }
+
     const response = await fetch(
-        `${API_URL}/planta`,
+        url,
         {
             method: metodo,
             headers: {
@@ -57,7 +64,7 @@ export const cadastraPlantaAPI = async (objeto, metodo) => {
             },
             body: JSON.stringify(objeto),
         }
-    )
+    );
 
     const data = await response.json();
 

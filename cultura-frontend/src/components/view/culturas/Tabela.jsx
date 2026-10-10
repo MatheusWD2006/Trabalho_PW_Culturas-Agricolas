@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import CulturaContext from "./CulturaContext";
 import Alerta from "../../common/Alerta";
-import Carregando from "../../common/Carregando"; // Importado
+import Carregando from "../../common/Carregando";
 import Table from "react-bootstrap/Table";
 import { Button } from "react-bootstrap";
-import { formatoDataBR } from "../../common/Uteis"; // Importado
+import { formatoDataBR } from "../../common/Uteis";
 
 function Tabela() {
   const { alerta, listaObjetos, remover, novoObjeto, editarObjeto, carregando } =
@@ -19,7 +19,6 @@ function Tabela() {
         Novo <i className="bi bi-file-earmark-plus"></i>
       </Button>
 
-      {/* Envolvendo a tabela com o componente Carregando */}
       <Carregando carregando={carregando}>
         {listaObjetos.length === 0 ? (
           <h1>Nenhuma cultura encontrada</h1>
@@ -37,23 +36,23 @@ function Tabela() {
             </thead>
             <tbody>
               {listaObjetos.map((objeto) => (
-                <tr key={objeto.codigo}>
+                <tr key={objeto.id_cultura}>
                   <td align="center">
                     <Button
                       variant="info"
                       className="me-2"
-                      onClick={() => editarObjeto(objeto.codigo)}
+                      onClick={() => editarObjeto(objeto.id_cultura)}
                     >
                       <i className="bi bi-pencil-square"></i>
                     </Button>
                     <Button
                       variant="danger"
-                      onClick={() => remover(objeto.codigo)}
+                      onClick={() => remover(objeto.id_cultura)}
                     >
                       <i className="bi bi-trash"></i>
                     </Button>
                   </td>
-                  <td>{objeto.codigo}</td>
+                  <td>{objeto.id_cultura}</td>
                   <td>{objeto.planta_nome || objeto.planta_id}</td>
                   <td>{objeto.hectares}</td>
                   <td>{formatoDataBR(objeto.data_plantio)}</td>

@@ -36,7 +36,13 @@ export const deleteCulturaPorCodigoAPI = async codigo => {
 }
 
 export const cadastraCulturaAPI = async (objeto, metodo) => {
-    const response = await fetch(`${API_URL}/cultura`, {
+    let url = `${API_URL}/cultura`;
+    if (metodo === "PUT") {
+        const id = objeto.id_cultura || objeto.codigo;
+        url = `${API_URL}/cultura/${id}`;
+    }
+
+    const response = await fetch(url, {
         method: metodo,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(objeto),

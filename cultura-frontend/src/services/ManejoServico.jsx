@@ -48,8 +48,14 @@ export const deleteManejoPorCodigoAPI = async codigo => {
 }
 
 export const cadastraManejoAPI = async (objeto, metodo) => {
+    let url = `${API_URL}/manejo`;
+    if (metodo === "PUT") {
+        const id = objeto.id_manejo || objeto.codigo;
+        url = `${API_URL}/manejo/${id}`;
+    }
+
     const response = await fetch(
-        `${API_URL}/manejo`,
+        url,
         {
             method: metodo,
             headers: {

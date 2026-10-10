@@ -36,23 +36,23 @@ function Tabela() {
             </thead>
             <tbody>
               {listaObjetos.map((objeto) => (
-                <tr key={objeto.codigo}>
+                <tr key={objeto.id_manejo}>
                   <td align="center">
                     <Button
                       variant="info"
                       className="me-2"
-                      onClick={() => editarObjeto(objeto.codigo)}
+                      onClick={() => editarObjeto(objeto.id_manejo)}
                     >
                       <i className="bi bi-pencil-square"></i>
                     </Button>
                     <Button
                       variant="danger"
-                      onClick={() => remover(objeto.codigo)}
+                      onClick={() => remover(objeto.id_manejo)}
                     >
                       <i className="bi bi-trash"></i>
                     </Button>
                   </td>
-                  <td>{objeto.codigo}</td>
+                  <td>{objeto.id_manejo}</td>
                   <td>{objeto.cultura_nome || objeto.cultura_id}</td>
                   <td>{objeto.tipo_manejo}</td>
                   <td>{objeto.descricao_manejo}</td>
