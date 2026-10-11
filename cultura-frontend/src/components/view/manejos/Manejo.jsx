@@ -65,8 +65,28 @@ function Manejo() {
     setExibirForm(true);
   };
 
+  // Função auxiliar para converter DD/MM/YYYY para YYYY-MM-DD
+  const converterDataParaInput = (dataStr) => {
+    if (!dataStr) return "";
+    // Se já estiver no formato YYYY-MM-DD, retorna como está
+    if (dataStr.includes("-")) return dataStr;
+
+    const partes = dataStr.split("/");
+    if (partes.length === 3) {
+      return `${partes[2]}-${partes[1]}-${partes[0]}`;
+    }
+    return "";
+  };
+
   const editarObjeto = async (codigo) => {
-    setObjeto(await getManejoPorCodigoAPI(codigo));
+    const dadosManejo = await getManejoPorCodigoAPI(codigo);
+
+    // Converte a data do manejo para o formato do input type="date"
+    if (dadosManejo.data_manejo) {
+      dadosManejo.data_manejo = converterDataParaInput(dadosManejo.data_manejo);
+    }
+
+    setObjeto(dadosManejo);
     setEditar(true);
     setAlerta({ status: "", message: "" });
     setExibirForm(true);

@@ -65,15 +65,108 @@ function Cultura() {
     setExibirForm(true);
   };
 
+  const converterDataParaInput = (dataStr) => {
+    if (!dataStr) return "";
+    if (dataStr.includes("-")) return dataStr;
+
+    const partes = dataStr.split("/");
+    if (partes.length === 3) {
+      return `${partes[2]}-${partes[1]}-${partes[0]}`;
+    }
+    return "";
+  };
+
   const editarObjeto = async (codigo) => {
-    setObjeto(await getCulturaPorCodigoAPI(codigo));
+    const dadosCultura = await getCulturaPorCodigoAPI(codigo);
+
+    // Converte as datas para o formato do input type="date"
+    if (dadosCultura.data_plantio) {
+      dadosCultura.data_plantio = converterDataParaInput(
+        dadosCultura.data_plantio,
+      );
+    }
+    if (dadosCultura.data_colheita) {
+      dadosCultura.data_colheita = converterDataParaInput(
+        dadosCultura.data_colheita,
+      );
+    }
+
+    setObjeto(dadosCultura);
     setEditar(true);
     setAlerta({ status: "", message: "" });
     setExibirForm(true);
   };
 
+  // Função para pegar a data de hoje no formato YYYY-MM-DD
+  const obterDataHoje = () => {
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+    const dia = String(hoje.getDate()).padStart(2, "0");
+    return `${ano}-${mes}-${dia}`;
+  };
+
+  const registrarColheita = async (cultura) => {
+    if (
+      window.confirm(
+        "Deseja registrar a colheita para esta cultura com a data de hoje?",
+      )
+    ) {
+      const dataHoje = obterDataHoje();
+
+      // Validação de segurança no front-end para garantir que não colhe antes ou no mesmo dia do plantio
+      // Nota: Como a data de plantio que vem do banco está em formato BR (DD/MM/YYYY), precisamos convertê-la para comparar com o formato ISO
+      const partesPlantio = cultura.data_plantio.split("/");
+      const dataPlantioISO =
+        partesPlantio.length === 3
+          ? `${partesPlantio[2]}-${partesPlantio[1]}-${partesPlantio[0]}`
+          : cultura.data_plantio;
+
+      if (dataHoje <= dataPlantioISO) {
+        setAlerta({
+          status: "error",
+          message:
+            "A data de colheita deve ser estritamente posterior à data de plantio!",
+        });
+        return;
+      }
+
+      // Prepara o objeto atualizado mantendo os dados e injetando a data de colheita de hoje em formato ISO
+      const culturaAtualizada = {
+        id_cultura: cultura.id_cultura,
+        planta_id: cultura.planta_id,
+        hectares: cultura.hectares,
+        data_plantio: dataPlantioISO,
+        data_colheita: dataHoje,
+      };
+
+      try {
+        let retornoAPI = await cadastraCulturaAPI(culturaAtualizada, "PUT");
+        setAlerta({
+          status: retornoAPI.status,
+          message: "Colheita registrada com sucesso!",
+        });
+        recuperaCulturas();
+      } catch (err) {
+        setAlerta({
+          status: "error",
+          message: "Erro ao registrar colheita: " + err.message,
+        });
+      }
+    }
+  };
   const acaoCadastrar = async (e) => {
     e.preventDefault();
+
+   
+    if (objeto.data_colheita && objeto.data_colheita <= objeto.data_plantio) {
+      setAlerta({ 
+        status: "error", 
+        message: "A data de colheita deve ser posterior à data de plantio (não podem ser no mesmo dia)!" 
+      });
+      return; 
+    }
+
     const metodo = editar ? "PUT" : "POST";
 
     try {
@@ -108,7 +201,7 @@ function Cultura() {
     <CulturaContext.Provider
       value={{
         listaObjetos,
-        listaPlantas, // Disponibilizado no Contexto
+        listaPlantas,
         alerta,
         remover,
         objeto,
@@ -116,6 +209,7 @@ function Cultura() {
         acaoCadastrar,
         handleChange,
         novoObjeto,
+        registrarColheita, // <--- Adicionado aqui para o Provider repassar para a Tabela
         exibirForm,
         setExibirForm,
         carregando,

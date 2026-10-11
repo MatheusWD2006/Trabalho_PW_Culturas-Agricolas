@@ -49,8 +49,8 @@ const validarIntervaloDatas = (dataPlantio, dataColheita) => {
         const plantio = new Date(dataPlantio);
         const colheita = new Date(dataColheita);
 
-        if (colheita < plantio) {
-            throw "A data de colheita não pode ser anterior à data de plantio.";
+        if (colheita <= plantio) {
+            throw "A data de colheita não pode ser anterior nem igual à data de plantio.";
         }
     }
 };

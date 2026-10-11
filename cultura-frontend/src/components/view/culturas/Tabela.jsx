@@ -7,7 +7,8 @@ import { Button } from "react-bootstrap";
 import { formatoDataBR } from "../../common/Uteis";
 
 function Tabela() {
-  const { alerta, listaObjetos, remover, novoObjeto, editarObjeto, carregando } =
+  // 1. Adiciona o 'registrarColheita' desestruturado do Contexto
+  const { alerta, listaObjetos, remover, novoObjeto, editarObjeto, registrarColheita, carregando } =
     useContext(CulturaContext);
 
   return (
@@ -38,6 +39,18 @@ function Tabela() {
               {listaObjetos.map((objeto) => (
                 <tr key={objeto.id_cultura}>
                   <td align="center">
+                    {/* 2. O botão de Colher aparece apenas se a data de colheita estiver vazia */}
+                    {!objeto.data_colheita && (
+                      <Button
+                        variant="success"
+                        className="me-2"
+                        title="Registrar Colheita"
+                        onClick={() => registrarColheita(objeto)}
+                      >
+                        <i className="bi bi-check2-all"></i> Colher
+                      </Button>
+                    )}
+
                     <Button
                       variant="info"
                       className="me-2"
