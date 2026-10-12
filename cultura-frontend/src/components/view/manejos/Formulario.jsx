@@ -6,16 +6,20 @@ import CampoEntrada from "../../common/CampoEntrada";
 import CampoEntradaTextArea from "../../common/CampoEntradaTextArea"; // Para a descrição
 import CampoSelect from "../../common/CampoSelect"; // Para selecionar a cultura
 import Dialogo from "../../common/Dialogo";
+import { formatarDataBR } from "../../common/datas";
 
 function Formulario() {
-  const {
+    const {
     objeto,
     handleChange,
     acaoCadastrar,
     alerta,
     exibirForm,
     setExibirForm,
-    listaCulturas, // Supondo que exista no contexto para o Select
+    listaCulturas,
+    dataInicioCultura,
+    dataMaxima,
+    culturaSelecionada,
   } = useContext(ManejoContext);
 
   return (
@@ -91,7 +95,7 @@ function Formulario() {
         />
       </Col>
 
-      <Col xs={12} md={12}>
+            <Col xs={12} md={12}>
         <CampoEntrada
           value={objeto.data_manejo || ""}
           id="txtDataManejo"
@@ -101,7 +105,18 @@ function Formulario() {
           onchange={handleChange}
           requerido={true}
           msginvalido="Informe a data do manejo"
+          min={dataInicioCultura || undefined}
+          max={dataMaxima}
         />
+        {culturaSelecionada && (
+          <small className="text-muted">
+            Período da cultura: {formatarDataBR(culturaSelecionada.data_plantio)}{" "}
+            até{" "}
+            {culturaSelecionada.data_colheita
+              ? formatarDataBR(culturaSelecionada.data_colheita)
+              : "em andamento"}
+          </small>
+        )}
       </Col>
     </Dialogo>
   );

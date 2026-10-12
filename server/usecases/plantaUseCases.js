@@ -50,7 +50,7 @@ const addPlantaDB = async (body) => {
 
 const updatePlantaDB = async (body) => {
     try {
-        // Agora o id_planta veio via URL e foi injetado no body pelo controller
+        //O id_planta vem via URL e é injetado no body pelo controller
         const { id_planta, nome_planta, nome_cientifico, tipo_planta, descricao_planta } = body;
 
         const results = await query(

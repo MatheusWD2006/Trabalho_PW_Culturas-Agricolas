@@ -7,7 +7,11 @@ import {
   cadastraManejoAPI,
 } from "../../../services/ManejoServico";
 import { getCulturasAPI } from "../../../services/CulturaServico";
-import { converterDataParaInput } from "../../../common/datas";
+import {
+  converterDataParaInput,
+  formatarDataBR,
+  obterDataHoje,
+} from "../../common/datas";
 import Tabela from "./Tabela";
 import Formulario from "./Formulario";
 import Carregando from "../../common/Carregando";
@@ -65,7 +69,7 @@ function Manejo() {
   const editarObjeto = async (codigo) => {
     const dadosManejo = await getManejoPorCodigoAPI(codigo);
 
-    // Cópia com a data no formato do input type="date" (AAAA-MM-DD)
+
     const objetoParaForm = {
       ...dadosManejo,
       data_manejo: converterDataParaInput(dadosManejo.data_manejo),
@@ -77,8 +81,42 @@ function Manejo() {
     setExibirForm(true);
   };
 
+  const culturaSelecionada = listaCulturas.find(
+    (c) => String(c.id_cultura ?? c.codigo) === String(objeto.cultura_id),
+  );
+
+  const dataInicioCultura = culturaSelecionada
+    ? converterDataParaInput(culturaSelecionada.data_plantio)
+    : "";
+  const dataFimCultura = culturaSelecionada
+    ? converterDataParaInput(culturaSelecionada.data_colheita)
+    : "";
+
+  const hoje = obterDataHoje();
+
+  const dataMaxima =
+    dataFimCultura && dataFimCultura < hoje ? dataFimCultura : hoje;
+
   const acaoCadastrar = async (e) => {
     e.preventDefault();
+
+    if (objeto.data_manejo) {
+      let mensagemErro = "";
+
+      if (objeto.data_manejo > hoje) {
+        mensagemErro = "A data do manejo não pode ser uma data futura.";
+      } else if (dataInicioCultura && objeto.data_manejo < dataInicioCultura) {
+        mensagemErro = `A data do manejo não pode ser anterior ao plantio da cultura (${formatarDataBR(dataInicioCultura)}).`;
+      } else if (dataFimCultura && objeto.data_manejo >= dataFimCultura) {
+        mensagemErro = `A data do manejo não pode ser posterior ou igual à colheita da cultura (${formatarDataBR(dataFimCultura)}).`;
+      }
+
+      if (mensagemErro) {
+        setAlerta({ status: "error", message: mensagemErro });
+        return;
+      }
+    }
+
     const metodo = editar ? "PUT" : "POST";
 
     try {
@@ -119,7 +157,10 @@ function Manejo() {
     <ManejoContext.Provider
       value={{
         listaObjetos,
-        listaCulturas, // Disponibilizado no Contexto
+        listaCulturas,
+        dataInicioCultura,
+        dataMaxima,
+        culturaSelecionada, // Disponibilizado no Contexto
         alerta,
         remover,
         objeto,

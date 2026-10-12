@@ -1,6 +1,6 @@
 const { query } = require("../configDB");
 const Cultura = require("../entities/Culturas");
-const { formatarDataBR, validarIntervaloDatas } = require('../utils/dateUtils');
+const { formatarDataSimples, validarIntervaloDatas } = require('../utils/dateUtils');
 
 const getCulturasDB = async () => {
   try {
@@ -12,8 +12,8 @@ const getCulturasDB = async () => {
           cultura.id_cultura,
           cultura.planta_id,
           cultura.hectares,
-          formatarDataBR(cultura.data_plantio),
-          formatarDataBR(cultura.data_colheita),
+          formatarDataSimples(cultura.data_plantio),
+          formatarDataSimples(cultura.data_colheita),
         ),
     );
   } catch (err) {
@@ -41,14 +41,14 @@ const addCulturaDB = async (body) => {
       cultura.id_cultura,
       cultura.planta_id,
       cultura.hectares,
-      formatarDataBR(cultura.data_plantio),
-      formatarDataBR(cultura.data_colheita),
+      formatarDataSimples(cultura.data_plantio),
+      formatarDataSimples(cultura.data_colheita),
     );
   } catch (err) {
     if (err.code === "23503") {
       throw `A planta com o código ${body.planta_id} não existe no cadastro.`;
     }
-    // Se for um erro lançado pelas nossas validações de data, repassa diretamente a mensagem
+    // Se for um erro é lançado pelas validações de data, repassa diretamente a mensagem
     throw typeof err === "string" ? err : "Erro ao inserir a cultura: " + err;
   }
 };
@@ -78,8 +78,8 @@ const updateCulturaDB = async (body) => {
       cultura.id_cultura,
       cultura.planta_id,
       cultura.hectares,
-      formatarDataBR(cultura.data_plantio),
-      formatarDataBR(cultura.data_colheita),
+      formatarDataSimples(cultura.data_plantio),
+      formatarDataSimples(cultura.data_colheita),
     );
   } catch (err) {
     throw typeof err === "string" ? err : "Erro ao alterar a cultura: " + err;
@@ -121,8 +121,8 @@ const getCulturaPorCodigoDB = async (codigo) => {
         cultura.id_cultura,
         cultura.planta_id,
         cultura.hectares,
-        formatarDataBR(cultura.data_plantio),
-        formatarDataBR(cultura.data_colheita),
+        formatarDataSimples(cultura.data_plantio),
+        formatarDataSimples(cultura.data_colheita),
       );
     }
   } catch (err) {

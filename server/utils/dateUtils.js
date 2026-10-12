@@ -1,6 +1,7 @@
+//Arquivo de utilidades para manipulação de datas
+
+
 // Retorna apenas a parte da data no formato padrão (AAAA-MM-DD).
-// O driver "pg" devolve colunas DATE como objeto Date (meia-noite LOCAL),
-// por isso usamos os getters locais (toISOString poderia mudar o dia).
 const formatarDataSimples = (data) => {
     if (!data) return null;
 
@@ -81,11 +82,27 @@ const validarDataManejo = (dataManejo) => {
     }
 };
 
+const paraBR = (iso) => iso.split("-").reverse().join("/");
+
+/**
+ * Valida se uma data (AAAA-MM-DD) está dentro do intervalo [inicio, fim].
+ * Se "fim" for null, só o limite inferior vale.
+ */
+const validarDataNoIntervalo = (data, inicio, fim) => {
+    if (data < inicio) {
+        throw `A data do manejo não pode ser anterior ao plantio da cultura (${paraBR(inicio)}).`;
+    }
+
+    if (fim && data >= fim) {
+        throw `A data do manejo não pode ser posterior ou igual à colheita da cultura (${paraBR(fim)}).`;
+    }
+};
+
 module.exports = {
-    formatarDataBR: formatarDataSimples,
-    formatarDataISO: formatarDataSimples,
+    formatarDataSimples,
     eDataValida,
     validarIntervaloDatas,
-    validarDataManejo
+    validarDataManejo,
+    validarDataNoIntervalo
 };
 

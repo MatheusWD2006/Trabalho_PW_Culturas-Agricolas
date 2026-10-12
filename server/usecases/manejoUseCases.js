@@ -1,6 +1,28 @@
 const { query } = require("../configDB");
 const Manejo = require("../entities/Manejos");
-const { formatarDataBR, validarDataManejo } = require('../utils/dateUtils');
+const {
+  formatarDataSimples,
+  validarDataManejo,
+  validarDataNoIntervalo,
+} = require("../utils/dateUtils");
+
+// Busca a cultura e confere se a data do manejo cai dentro do período dela
+const validarManejoNaCultura = async (cultura_id, data_manejo) => {
+  const { rows } = await query(
+    "SELECT data_plantio, data_colheita FROM culturas WHERE id_cultura = $1",
+    [cultura_id],
+  );
+
+  if (rows.length === 0) {
+    throw `A cultura com o código ${cultura_id} não existe no cadastro.`;
+  }
+
+  validarDataNoIntervalo(
+    data_manejo,
+    formatarDataSimples(rows[0].data_plantio),
+    formatarDataSimples(rows[0].data_colheita),
+  );
+};
 
 const getManejosDB = async () => {
   try {
@@ -13,7 +35,7 @@ const getManejosDB = async () => {
           manejo.cultura_id,
           manejo.tipo_manejo,
           manejo.descricao_manejo,
-          formatarDataBR(manejo.data_manejo),
+          formatarDataSimples(manejo.data_manejo),
         ),
     );
   } catch (err) {
@@ -27,6 +49,8 @@ const addManejoDB = async (body) => {
 
     // Data real e não futura
     validarDataManejo(data_manejo);
+    // Dentro do período da cultura
+    await validarManejoNaCultura(cultura_id, data_manejo);
 
     const results = await query(
       `INSERT INTO manejos (cultura_id, tipo_manejo, descricao_manejo, data_manejo)
@@ -42,7 +66,7 @@ const addManejoDB = async (body) => {
       manejo.cultura_id,
       manejo.tipo_manejo,
       manejo.descricao_manejo,
-      formatarDataBR(manejo.data_manejo),
+      formatarDataSimples(manejo.data_manejo),
     );
   } catch (err) {
     if (err.code === "23503") {
@@ -58,6 +82,8 @@ const updateManejoDB = async (body) => {
 
     // Data real e não futura
     validarDataManejo(data_manejo);
+    // Dentro do período da cultura
+    await validarManejoNaCultura(cultura_id, data_manejo);
 
     const results = await query(
       `UPDATE manejos
@@ -78,7 +104,7 @@ const updateManejoDB = async (body) => {
       manejo.cultura_id,
       manejo.tipo_manejo,
       manejo.descricao_manejo,
-      formatarDataBR(manejo.data_manejo),
+      formatarDataSimples(manejo.data_manejo),
     );
   } catch (err) {
     throw typeof err === "string" ? err : "Erro ao alterar o manejo: " + err;
@@ -121,7 +147,7 @@ const getManejoPorCodigoDB = async (codigo) => {
         manejo.cultura_id,
         manejo.tipo_manejo,
         manejo.descricao_manejo,
-        formatarDataBR(manejo.data_manejo),
+        formatarDataSimples(manejo.data_manejo),
       );
     }
   } catch (err) {

@@ -11,7 +11,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Registra todas as rotas de uma vez só!
+// Registra todas as rotas de uma vez só
 app.use(routes);
 
 const PORT = process.env.PORT || 3003;

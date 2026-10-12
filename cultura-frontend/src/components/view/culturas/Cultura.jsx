@@ -10,7 +10,7 @@ import { getPlantasAPI } from "../../../services/PlantaServico";
 import {
   converterDataParaInput,
   obterDataHoje,
-} from "../../../common/datas";
+} from "../../common/datas";
 import Tabela from "./Tabela";
 import Formulario from "./Formulario";
 import Carregando from "../../common/Carregando";

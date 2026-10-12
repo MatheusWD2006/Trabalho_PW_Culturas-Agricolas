@@ -4,7 +4,7 @@ import Alerta from "../../common/Alerta";
 import Carregando from "../../common/Carregando";
 import Table from "react-bootstrap/Table";
 import { Button } from "react-bootstrap";
-import { formatarDataBR } from "../../../common/datas";
+import { formatarDataBR } from "../../common/datas";
 
 function Tabela() {
   const {
