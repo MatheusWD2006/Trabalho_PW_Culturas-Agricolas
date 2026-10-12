@@ -4,7 +4,7 @@ import Alerta from "../../common/Alerta";
 import Carregando from "../../common/Carregando";
 import Table from "react-bootstrap/Table";
 import { Button } from "react-bootstrap";
-import { formatoDataBR } from "../../common/Uteis";
+import { formatarDataBR } from "../../../common/datas";
 
 function Tabela() {
   const { alerta, listaObjetos, remover, novoObjeto, editarObjeto, carregando } =
@@ -14,7 +14,7 @@ function Tabela() {
     <div style={{ padding: "20px" }}>
       <h1>Manejos</h1>
       <Alerta alerta={alerta} />
-      
+
       <Button variant="primary" className="mb-3" onClick={() => novoObjeto()}>
         Novo <i className="bi bi-file-earmark-plus"></i>
       </Button>
@@ -56,7 +56,7 @@ function Tabela() {
                   <td>{objeto.cultura_nome || objeto.cultura_id}</td>
                   <td>{objeto.tipo_manejo}</td>
                   <td>{objeto.descricao_manejo}</td>
-                  <td>{objeto.data_manejo ? formatoDataBR(objeto.data_manejo) : ''}</td>
+                  <td>{formatarDataBR(objeto.data_manejo)}</td>
                 </tr>
               ))}
             </tbody>

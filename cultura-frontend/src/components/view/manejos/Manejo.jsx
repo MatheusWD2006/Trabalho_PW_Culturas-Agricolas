@@ -6,7 +6,8 @@ import {
   deleteManejoPorCodigoAPI,
   cadastraManejoAPI,
 } from "../../../services/ManejoServico";
-import { getCulturasAPI } from "../../../services/CulturaServico"; // Importa API de Culturas
+import { getCulturasAPI } from "../../../services/CulturaServico";
+import { converterDataParaInput } from "../../../common/datas";
 import Tabela from "./Tabela";
 import Formulario from "./Formulario";
 import Carregando from "../../common/Carregando";
@@ -44,49 +45,33 @@ function Manejo() {
   const [exibirForm, setExibirForm] = useState(false);
 
   // Objeto alinhado com a tabela/entidade de Manejo
-  const [objeto, setObjeto] = useState({
+  const objetoVazio = {
     id_manejo: 0,
     cultura_id: "",
     tipo_manejo: "",
     descricao_manejo: "",
     data_manejo: "",
-  });
+  };
+
+  const [objeto, setObjeto] = useState(objetoVazio);
 
   const novoObjeto = () => {
     setEditar(false);
     setAlerta({ status: "", message: "" });
-    setObjeto({
-      id_manejo: 0,
-      cultura_id: "",
-      tipo_manejo: "",
-      descricao_manejo: "",
-      data_manejo: "",
-    });
+    setObjeto(objetoVazio);
     setExibirForm(true);
-  };
-
-  // Função auxiliar para converter DD/MM/YYYY para YYYY-MM-DD
-  const converterDataParaInput = (dataStr) => {
-    if (!dataStr) return "";
-    // Se já estiver no formato YYYY-MM-DD, retorna como está
-    if (dataStr.includes("-")) return dataStr;
-
-    const partes = dataStr.split("/");
-    if (partes.length === 3) {
-      return `${partes[2]}-${partes[1]}-${partes[0]}`;
-    }
-    return "";
   };
 
   const editarObjeto = async (codigo) => {
     const dadosManejo = await getManejoPorCodigoAPI(codigo);
 
-    // Converte a data do manejo para o formato do input type="date"
-    if (dadosManejo.data_manejo) {
-      dadosManejo.data_manejo = converterDataParaInput(dadosManejo.data_manejo);
-    }
+    // Cópia com a data no formato do input type="date" (AAAA-MM-DD)
+    const objetoParaForm = {
+      ...dadosManejo,
+      data_manejo: converterDataParaInput(dadosManejo.data_manejo),
+    };
 
-    setObjeto(dadosManejo);
+    setObjeto(objetoParaForm);
     setEditar(true);
     setAlerta({ status: "", message: "" });
     setExibirForm(true);
@@ -102,10 +87,16 @@ function Manejo() {
         status: retornoAPI.status,
         message: retornoAPI.message,
       });
-      setObjeto(retornoAPI.objeto);
 
-      if (!editar) {
-        setEditar(true);
+      // Só atualiza o formulário se a API devolveu o objeto (em erro pode vir vazio)
+      if (retornoAPI.objeto) {
+        setObjeto({
+          ...retornoAPI.objeto,
+          data_manejo: converterDataParaInput(retornoAPI.objeto.data_manejo),
+        });
+        if (!editar) {
+          setEditar(true);
+        }
       }
     } catch (err) {
       console.error(err.message);

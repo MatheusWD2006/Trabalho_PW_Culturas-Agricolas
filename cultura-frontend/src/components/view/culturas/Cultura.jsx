@@ -6,7 +6,11 @@ import {
   deleteCulturaPorCodigoAPI,
   cadastraCulturaAPI,
 } from "../../../services/CulturaServico";
-import { getPlantasAPI } from "../../../services/PlantaServico"; // Importa API de Plantas
+import { getPlantasAPI } from "../../../services/PlantaServico";
+import {
+  converterDataParaInput,
+  obterDataHoje,
+} from "../../../common/datas";
 import Tabela from "./Tabela";
 import Formulario from "./Formulario";
 import Carregando from "../../common/Carregando";
@@ -14,7 +18,7 @@ import Carregando from "../../common/Carregando";
 function Cultura() {
   const [alerta, setAlerta] = useState({ status: "", message: "" });
   const [listaObjetos, setListaObjetos] = useState([]);
-  const [listaPlantas, setListaPlantas] = useState([]); // Estado para o Select
+  const [listaPlantas, setListaPlantas] = useState([]);
   const [carregando, setCarregando] = useState(true);
 
   const recuperaCulturas = async () => {
@@ -37,73 +41,43 @@ function Cultura() {
 
   useEffect(() => {
     recuperaCulturas();
-    recuperaPlantas(); // Busca as plantas ao carregar
+    recuperaPlantas();
   }, []);
 
   const [editar, setEditar] = useState(false);
   const [exibirForm, setExibirForm] = useState(false);
 
-  // Objeto alinhado com a tabela/entidade de Cultura
-  const [objeto, setObjeto] = useState({
+  const objetoVazio = {
     id_cultura: 0,
     planta_id: "",
     hectares: "",
     data_plantio: "",
     data_colheita: "",
-  });
+  };
+
+  const [objeto, setObjeto] = useState(objetoVazio);
 
   const novoObjeto = () => {
     setEditar(false);
     setAlerta({ status: "", message: "" });
-    setObjeto({
-      id_cultura: 0,
-      planta_id: "",
-      hectares: "",
-      data_plantio: "",
-      data_colheita: "",
-    });
+    setObjeto(objetoVazio);
     setExibirForm(true);
-  };
-
-  const converterDataParaInput = (dataStr) => {
-    if (!dataStr) return "";
-    if (dataStr.includes("-")) return dataStr;
-
-    const partes = dataStr.split("/");
-    if (partes.length === 3) {
-      return `${partes[2]}-${partes[1]}-${partes[0]}`;
-    }
-    return "";
   };
 
   const editarObjeto = async (codigo) => {
     const dadosCultura = await getCulturaPorCodigoAPI(codigo);
 
-    // Converte as datas para o formato do input type="date"
-    if (dadosCultura.data_plantio) {
-      dadosCultura.data_plantio = converterDataParaInput(
-        dadosCultura.data_plantio,
-      );
-    }
-    if (dadosCultura.data_colheita) {
-      dadosCultura.data_colheita = converterDataParaInput(
-        dadosCultura.data_colheita,
-      );
-    }
+    // Garante o formato AAAA-MM-DD exigido pelo input type="date"
+    const objetoParaForm = {
+      ...dadosCultura,
+      data_plantio: converterDataParaInput(dadosCultura.data_plantio),
+      data_colheita: converterDataParaInput(dadosCultura.data_colheita),
+    };
 
-    setObjeto(dadosCultura);
+    setObjeto(objetoParaForm);
     setEditar(true);
     setAlerta({ status: "", message: "" });
     setExibirForm(true);
-  };
-
-  // Função para pegar a data de hoje no formato YYYY-MM-DD
-  const obterDataHoje = () => {
-    const hoje = new Date();
-    const ano = hoje.getFullYear();
-    const mes = String(hoje.getMonth() + 1).padStart(2, "0");
-    const dia = String(hoje.getDate()).padStart(2, "0");
-    return `${ano}-${mes}-${dia}`;
   };
 
   const registrarColheita = async (cultura) => {
@@ -113,16 +87,10 @@ function Cultura() {
       )
     ) {
       const dataHoje = obterDataHoje();
+      const dataPlantio = converterDataParaInput(cultura.data_plantio);
 
-      // Validação de segurança no front-end para garantir que não colhe antes ou no mesmo dia do plantio
-      // Nota: Como a data de plantio que vem do banco está em formato BR (DD/MM/YYYY), precisamos convertê-la para comparar com o formato ISO
-      const partesPlantio = cultura.data_plantio.split("/");
-      const dataPlantioISO =
-        partesPlantio.length === 3
-          ? `${partesPlantio[2]}-${partesPlantio[1]}-${partesPlantio[0]}`
-          : cultura.data_plantio;
-
-      if (dataHoje <= dataPlantioISO) {
+      // Ambas em AAAA-MM-DD: a comparação de strings é direta
+      if (dataHoje <= dataPlantio) {
         setAlerta({
           status: "error",
           message:
@@ -131,12 +99,11 @@ function Cultura() {
         return;
       }
 
-      // Prepara o objeto atualizado mantendo os dados e injetando a data de colheita de hoje em formato ISO
       const culturaAtualizada = {
         id_cultura: cultura.id_cultura,
         planta_id: cultura.planta_id,
         hectares: cultura.hectares,
-        data_plantio: dataPlantioISO,
+        data_plantio: dataPlantio,
         data_colheita: dataHoje,
       };
 
@@ -144,7 +111,10 @@ function Cultura() {
         let retornoAPI = await cadastraCulturaAPI(culturaAtualizada, "PUT");
         setAlerta({
           status: retornoAPI.status,
-          message: "Colheita registrada com sucesso!",
+          message:
+            retornoAPI.status === "success"
+              ? "Colheita registrada com sucesso!"
+              : retornoAPI.message,
         });
         recuperaCulturas();
       } catch (err) {
@@ -155,16 +125,17 @@ function Cultura() {
       }
     }
   };
+
   const acaoCadastrar = async (e) => {
     e.preventDefault();
 
-   
     if (objeto.data_colheita && objeto.data_colheita <= objeto.data_plantio) {
-      setAlerta({ 
-        status: "error", 
-        message: "A data de colheita deve ser posterior à data de plantio (não podem ser no mesmo dia)!" 
+      setAlerta({
+        status: "error",
+        message:
+          "A data de colheita deve ser posterior à data de plantio (não podem ser no mesmo dia)!",
       });
-      return; 
+      return;
     }
 
     const metodo = editar ? "PUT" : "POST";
@@ -175,10 +146,19 @@ function Cultura() {
         status: retornoAPI.status,
         message: retornoAPI.message,
       });
-      setObjeto(retornoAPI.objeto);
 
-      if (!editar) {
-        setEditar(true);
+      // Só atualiza o formulário se a API devolveu o objeto (em erro pode vir vazio)
+      if (retornoAPI.objeto) {
+        setObjeto({
+          ...retornoAPI.objeto,
+          data_plantio: converterDataParaInput(retornoAPI.objeto.data_plantio),
+          data_colheita: converterDataParaInput(
+            retornoAPI.objeto.data_colheita,
+          ),
+        });
+        if (!editar) {
+          setEditar(true);
+        }
       }
     } catch (err) {
       console.error(err.message);
@@ -209,7 +189,7 @@ function Cultura() {
         acaoCadastrar,
         handleChange,
         novoObjeto,
-        registrarColheita, // <--- Adicionado aqui para o Provider repassar para a Tabela
+        registrarColheita,
         exibirForm,
         setExibirForm,
         carregando,

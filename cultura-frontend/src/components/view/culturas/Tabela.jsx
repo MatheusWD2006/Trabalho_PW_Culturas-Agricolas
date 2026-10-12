@@ -4,18 +4,24 @@ import Alerta from "../../common/Alerta";
 import Carregando from "../../common/Carregando";
 import Table from "react-bootstrap/Table";
 import { Button } from "react-bootstrap";
-import { formatoDataBR } from "../../common/Uteis";
+import { formatarDataBR } from "../../../common/datas";
 
 function Tabela() {
-  // 1. Adiciona o 'registrarColheita' desestruturado do Contexto
-  const { alerta, listaObjetos, remover, novoObjeto, editarObjeto, registrarColheita, carregando } =
-    useContext(CulturaContext);
+  const {
+    alerta,
+    listaObjetos,
+    remover,
+    novoObjeto,
+    editarObjeto,
+    registrarColheita,
+    carregando,
+  } = useContext(CulturaContext);
 
   return (
     <div style={{ padding: "20px" }}>
       <h1>Culturas</h1>
       <Alerta alerta={alerta} />
-      
+
       <Button variant="primary" className="mb-3" onClick={() => novoObjeto()}>
         Novo <i className="bi bi-file-earmark-plus"></i>
       </Button>
@@ -39,7 +45,7 @@ function Tabela() {
               {listaObjetos.map((objeto) => (
                 <tr key={objeto.id_cultura}>
                   <td align="center">
-                    {/* 2. O botão de Colher aparece apenas se a data de colheita estiver vazia */}
+                    {/* O botão de Colher aparece apenas se a data de colheita estiver vazia */}
                     {!objeto.data_colheita && (
                       <Button
                         variant="success"
@@ -68,8 +74,8 @@ function Tabela() {
                   <td>{objeto.id_cultura}</td>
                   <td>{objeto.planta_nome || objeto.planta_id}</td>
                   <td>{objeto.hectares}</td>
-                  <td>{formatoDataBR(objeto.data_plantio)}</td>
-                  <td>{objeto.data_colheita ? formatoDataBR(objeto.data_colheita) : ''}</td>
+                  <td>{formatarDataBR(objeto.data_plantio)}</td>
+                  <td>{formatarDataBR(objeto.data_colheita)}</td>
                 </tr>
               ))}
             </tbody>
