@@ -19,7 +19,7 @@ import Carregando from "../../common/Carregando";
 function Manejo() {
   const [alerta, setAlerta] = useState({ status: "", message: "" });
   const [listaObjetos, setListaObjetos] = useState([]);
-  const [listaCulturas, setListaCulturas] = useState([]); // Estado para o Select
+  const [listaCulturas, setListaCulturas] = useState([]);
   const [carregando, setCarregando] = useState(true);
 
   const recuperaManejos = async () => {
@@ -42,13 +42,13 @@ function Manejo() {
 
   useEffect(() => {
     recuperaManejos();
-    recuperaCulturas(); // Busca as culturas ao carregar
+    recuperaCulturas();
   }, []);
 
   const [editar, setEditar] = useState(false);
   const [exibirForm, setExibirForm] = useState(false);
 
-  // Objeto alinhado com a tabela/entidade de Manejo
+ 
   const objetoVazio = {
     id_manejo: 0,
     cultura_id: "",
@@ -80,11 +80,11 @@ function Manejo() {
     setAlerta({ status: "", message: "" });
     setExibirForm(true);
   };
-
+  // Obtém a cultura selecionada com base no ID da cultura do manejo
   const culturaSelecionada = listaCulturas.find(
     (c) => String(c.id_cultura ?? c.codigo) === String(objeto.cultura_id),
   );
-
+  // Obtém as datas de plantio e colheita da cultura selecionada, se houver
   const dataInicioCultura = culturaSelecionada
     ? converterDataParaInput(culturaSelecionada.data_plantio)
     : "";
@@ -93,7 +93,7 @@ function Manejo() {
     : "";
 
   const hoje = obterDataHoje();
-
+  // Define a data máxima para o manejo com base na data de colheita da cultura ou na data atual
   const dataMaxima =
     dataFimCultura && dataFimCultura < hoje ? dataFimCultura : hoje;
 
@@ -102,7 +102,7 @@ function Manejo() {
 
     if (objeto.data_manejo) {
       let mensagemErro = "";
-
+      // Validações de data do manejo em relação ao plantio e colheita da cultura
       if (objeto.data_manejo > hoje) {
         mensagemErro = "A data do manejo não pode ser uma data futura.";
       } else if (dataInicioCultura && objeto.data_manejo < dataInicioCultura) {
@@ -160,7 +160,7 @@ function Manejo() {
         listaCulturas,
         dataInicioCultura,
         dataMaxima,
-        culturaSelecionada, // Disponibilizado no Contexto
+        culturaSelecionada,
         alerta,
         remover,
         objeto,

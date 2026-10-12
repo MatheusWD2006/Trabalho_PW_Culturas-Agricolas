@@ -68,13 +68,13 @@ function Cultura() {
     const dadosCultura = await getCulturaPorCodigoAPI(codigo);
 
     // Garante o formato AAAA-MM-DD exigido pelo input type="date"
-    const objetoParaForm = {
+    const objetoParaFormulario = {
       ...dadosCultura,
       data_plantio: converterDataParaInput(dadosCultura.data_plantio),
       data_colheita: converterDataParaInput(dadosCultura.data_colheita),
     };
 
-    setObjeto(objetoParaForm);
+    setObjeto(objetoParaFormulario);
     setEditar(true);
     setAlerta({ status: "", message: "" });
     setExibirForm(true);

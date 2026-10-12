@@ -29,7 +29,7 @@ const addCultura = async (request, response) => {
 };
 
 const updateCultura = async (request, response) => {
-
+    // Injeta o ID da URL no corpo da requisição
     request.body.id_cultura = parseInt(request.params.codigo);
 
     await updateCulturaDB(request.body)

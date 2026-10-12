@@ -29,6 +29,7 @@ const addPlanta = async (request, response) => {
 };
 
 const updatePlanta = async (request, response) => {
+    // Injeta o ID da URL no corpo da requisição
     request.body.id_planta = parseInt(request.params.codigo);
 
     await updatePlantaDB(request.body)

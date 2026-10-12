@@ -20,7 +20,7 @@ function Menu() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <NavDropdown title="Manutenções" id="basic-nav-dropdown">
+              <NavDropdown title="Tabelas" id="basic-nav-dropdown">
                 <NavLink className="dropdown-item" exact="true" to="plantas">
                   Plantas
                 </NavLink>

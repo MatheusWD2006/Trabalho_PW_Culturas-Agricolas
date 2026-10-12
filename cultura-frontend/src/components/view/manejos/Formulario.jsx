@@ -33,7 +33,7 @@ function Formulario() {
     >
       <Alerta alerta={alerta} />
 
-      {/* Apenas a chave primária/código é somente leitura */}
+      
       <Col xs={12} md={12}>
         <CampoEntrada
           value={objeto.id_manejo || ""}
@@ -45,7 +45,7 @@ function Formulario() {
           readonly={true}
         />
       </Col>
-      {/* Seleção de Cultura via CampoSelect */}
+     
       <Col xs={12} md={12}>
         <CampoSelect
           id="txtCulturaId"
@@ -82,7 +82,7 @@ function Formulario() {
         />
       </Col>
 
-      {/* Uso do CampoEntradaTextArea para descrições mais longas */}
+      
       <Col xs={12} md={12}>
         <CampoEntradaTextArea
           value={objeto.descricao_manejo || ""}

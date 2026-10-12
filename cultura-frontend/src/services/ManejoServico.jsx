@@ -48,6 +48,7 @@ export const deleteManejoPorCodigoAPI = async codigo => {
 }
 
 export const cadastraManejoAPI = async (objeto, metodo) => {
+    // Se o método for PUT, adicionamos o ID/código na URL
     let url = `${API_URL}/manejo`;
     if (metodo === "PUT") {
         const id = objeto.id_manejo || objeto.codigo;

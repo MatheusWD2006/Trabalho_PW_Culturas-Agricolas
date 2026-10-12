@@ -14,7 +14,7 @@ function Formulario() {
     alerta,
     exibirForm,
     setExibirForm,
-    listaPlantas, // Supondo que tenha a lista de plantas no contexto
+    listaPlantas,
   } = useContext(CulturaContext);
 
   return (
@@ -28,7 +28,7 @@ function Formulario() {
     >
       <Alerta alerta={alerta} />
 
-      {/* Apenas o código/ID é de leitura (readonly) */}
+     
       <Col xs={12} md={12}>
         <CampoEntrada
           value={objeto.id_cultura || ""}
@@ -41,7 +41,7 @@ function Formulario() {
         />
       </Col>
 
-      {/* Seleção de Planta corrigida */}
+      
       <Col xs={12} md={12}>
         <CampoSelect
           id="txtPlantaId"
@@ -63,7 +63,7 @@ function Formulario() {
         </CampoSelect>
       </Col>
 
-      {/* Hectares sem readonly e tipo="number" */}
+      
       <Col xs={12} md={12}>
         <CampoEntrada
           value={objeto.hectares || ""}

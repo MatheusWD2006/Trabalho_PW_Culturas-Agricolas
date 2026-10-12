@@ -1,4 +1,6 @@
-// Converte AAAA-MM-DD (ou timestamp ISO) para DD/MM/AAAA, apenas para exibição.
+// Funções auxiliares para manipulação de datas.
+
+// Converte AAAA-MM-DD para DD/MM/AAAA, apenas para exibição.
 export const formatarDataBR = (iso) => {
   if (!iso) return "";
   const [ano, mes, dia] = String(iso).slice(0, 10).split("-");

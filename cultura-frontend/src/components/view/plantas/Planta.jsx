@@ -36,7 +36,7 @@ function Planta() {
   const [editar, setEditar] = useState(false);
   const [exibirForm, setExibirForm] = useState(false);
 
-  // Objeto alinhado com a tabela/entidade de Planta
+  
   const [objeto, setObjeto] = useState({
     id_planta: 0,
     nome_planta: "",

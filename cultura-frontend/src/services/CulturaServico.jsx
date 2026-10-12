@@ -36,6 +36,7 @@ export const deleteCulturaPorCodigoAPI = async codigo => {
 }
 
 export const cadastraCulturaAPI = async (objeto, metodo) => {
+    // Se o método for PUT, adicionamos o ID/código na URL
     let url = `${API_URL}/cultura`;
     if (metodo === "PUT") {
         const id = objeto.id_cultura || objeto.codigo;

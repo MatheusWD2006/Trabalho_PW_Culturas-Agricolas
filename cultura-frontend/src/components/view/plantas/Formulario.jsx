@@ -30,7 +30,7 @@ function Formulario() {
 
             <Alerta alerta={alerta} />
 
-            {/* Campo de ID (Apenas Leitura) */}
+            
             <Col xs={12} md={12}>
                 <CampoEntrada
                     value={objeto.id_planta || objeto.codigo || ''}
@@ -43,7 +43,7 @@ function Formulario() {
                 />
             </Col>
 
-            {/* Nome da Planta */}
+            
             <Col xs={12} md={12}>
                 <CampoEntrada
                     value={objeto.nome_planta || ''}
@@ -58,7 +58,7 @@ function Formulario() {
                 />
             </Col>
 
-            {/* Nome Científico */}
+            
             <Col xs={12} md={12}>
                 <CampoEntrada
                     value={objeto.nome_cientifico || ''}
@@ -72,7 +72,7 @@ function Formulario() {
                 />
             </Col>
 
-            {/* Tipo da Planta */}
+           
             <Col xs={12} md={12}>
                 <CampoEntrada
                     value={objeto.tipo_planta || ''}
@@ -87,7 +87,7 @@ function Formulario() {
                 />
             </Col>
 
-            {/* Descrição da Planta com TextArea */}
+
             <Col xs={12} md={12}>
                 <CampoEntradaTextArea
                     value={objeto.descricao_planta || ''}
