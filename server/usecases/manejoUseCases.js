@@ -1,10 +1,11 @@
 const { query } = require("../configDB");
 const Manejo = require("../entities/Manejos");
-const { formatarDataBR, eDataValida } = require('../utils/dateUtils');
+const { formatarDataBR, validarDataManejo } = require('../utils/dateUtils');
+
 const getManejosDB = async () => {
   try {
     const { rows } = await query("SELECT * FROM manejos ORDER BY id_manejo");
-    
+
     return rows.map(
       (manejo) =>
         new Manejo(
@@ -24,9 +25,8 @@ const addManejoDB = async (body) => {
   try {
     const { cultura_id, tipo_manejo, descricao_manejo, data_manejo } = body;
 
-    if (!eDataValida(data_manejo)) {
-      throw "A data do manejo informada é inválida ou inexistente.";
-    }
+    // Data real e não futura
+    validarDataManejo(data_manejo);
 
     const results = await query(
       `INSERT INTO manejos (cultura_id, tipo_manejo, descricao_manejo, data_manejo)
@@ -56,9 +56,8 @@ const updateManejoDB = async (body) => {
   try {
     const { id_manejo, cultura_id, tipo_manejo, descricao_manejo, data_manejo } = body;
 
-    if (!eDataValida(data_manejo)) {
-      throw "A data do manejo informada é inválida ou inexistente.";
-    }
+    // Data real e não futura
+    validarDataManejo(data_manejo);
 
     const results = await query(
       `UPDATE manejos

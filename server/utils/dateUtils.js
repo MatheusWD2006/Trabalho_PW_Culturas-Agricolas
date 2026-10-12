@@ -16,6 +16,9 @@ const formatarDataSimples = (data) => {
     return String(data).slice(0, 10);
 };
 
+// Data de hoje (local do servidor) no formato AAAA-MM-DD
+const obterDataHoje = () => formatarDataSimples(new Date());
+
 /**
  * Valida se uma string de data (YYYY-MM-DD) representa uma data real válida no calendário.
  */
@@ -40,7 +43,9 @@ const eDataValida = (dataString) => {
 };
 
 /**
- * Valida se o intervalo entre plantio e colheita é coerente comparando as strings diretamente.
+ * Valida o intervalo entre plantio e colheita:
+ * - plantio deve ser uma data real
+ * - colheita (se informada) deve ser uma data real, posterior ao plantio e não futura
  */
 const validarIntervaloDatas = (dataPlantio, dataColheita) => {
     if (!eDataValida(dataPlantio)) {
@@ -56,12 +61,31 @@ const validarIntervaloDatas = (dataPlantio, dataColheita) => {
         if (dataColheita <= dataPlantio) {
             throw "A data de colheita não pode ser anterior nem igual à data de plantio.";
         }
+
+        if (dataColheita > obterDataHoje()) {
+            throw "A data de colheita não pode ser uma data futura.";
+        }
+    }
+};
+
+/**
+ * Valida a data de um manejo: deve ser uma data real e não futura.
+ */
+const validarDataManejo = (dataManejo) => {
+    if (!eDataValida(dataManejo)) {
+        throw "A data do manejo informada é inválida ou inexistente.";
+    }
+
+    if (dataManejo > obterDataHoje()) {
+        throw "A data do manejo não pode ser uma data futura.";
     }
 };
 
 module.exports = {
-    formatarDataBR: formatarDataSimples,  // Mantém os nomes para não quebrar os use cases
-    formatarDataISO: formatarDataSimples, // Mantém os nomes para não quebrar os use cases
+    formatarDataBR: formatarDataSimples,
+    formatarDataISO: formatarDataSimples,
     eDataValida,
-    validarIntervaloDatas
+    validarIntervaloDatas,
+    validarDataManejo
 };
+
